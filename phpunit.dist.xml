@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         backupGlobals="false"
+         colors="true"
+         failOnNotice="true"
+         failOnWarning="true"
+         bootstrap="tests/bootstrap.php"
+         cacheDirectory=".phpunit.cache"
+>
+    <php>
+        <ini name="display_errors" value="1" />
+        <ini name="error_reporting" value="-1" />
+        <env name="PHPUNIT_RUNNING" value="true" force="true" />
+        <server name="SHELL_VERBOSITY" value="-1" />
+        
+        <!-- Integration test configuration -->
+        <env name="RUN_INTEGRATION_TESTS" value="false" />
+        <env name="SUPERSET_TEST_BASE_URL" value="http://localhost:8088" />
+        <env name="SUPERSET_TEST_USERNAME" value="admin" />
+        <env name="SUPERSET_TEST_PASSWORD" value="admin" />
+    </php>
+
+    <testsuites>
+        <testsuite name="Unit Tests">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Integration Tests">
+            <directory>tests/Integration</directory>
+        </testsuite>
+        <testsuite name="All Tests">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <groups>
+        <include>
+            <group>unit</group>
+        </include>
+        <exclude>
+            <group>integration</group>
+            <group>slow</group>
+        </exclude>
+    </groups>
+
+    <source ignoreSuppressionOfDeprecations="true" restrictNotices="true" restrictWarnings="true">
+        <include>
+            <directory>src</directory>
+        </include>
+    </source>
+
+    <coverage includeUncoveredFiles="true">
+        <report>
+            <html outputDirectory="build/coverage" lowUpperBound="80" highLowerBound="95"/>
+            <text outputFile="build/coverage.txt"/>
+            <clover outputFile="build/coverage.xml"/>
+        </report>
+    </coverage>
+
+    <logging>
+        <junit outputFile="build/junit.xml"/>
+    </logging>
+</phpunit>

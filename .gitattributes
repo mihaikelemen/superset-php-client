@@ -1,0 +1,45 @@
+# Git attributes for proper language detection and EOL handling
+
+# Auto detect text files and normalize line endings to LF
+* text=auto eol=lf
+
+# PHP files
+*.php text diff=php
+
+# Composer
+composer.json text
+composer.lock text -diff
+
+# Documentation
+*.md text
+*.txt text
+LICENSE text
+README* text
+
+# Configuration files
+*.json text
+*.xml text
+*.yml text
+*.yaml text
+*.neon text
+*.ini text
+*.dist text
+
+# Shell scripts
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Git
+.gitattributes text
+.gitignore text
+
+# Exclude files from distribution
+/tests export-ignore
+/build export-ignore
+/.github export-ignore
+/.gitignore export-ignore
+/.gitattributes export-ignore
+/phpunit.dist.xml export-ignore
+/phpstan.neon export-ignore
+/.php-cs-fixer.php export-ignore
+/.php_cs.dist export-ignore
