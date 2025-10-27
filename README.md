@@ -4,7 +4,7 @@
 [![Latest Version](https://img.shields.io/packagist/v/mihaikelemen/superset-php-client)](https://packagist.org/packages/mihaikelemen/superset-php-client)
 [![License](https://img.shields.io/packagist/l/mihaikelemen/superset-php-client)](https://github.com/mihaikelemen/superset-php-client/blob/main/LICENSE)
 
-PHP 8.4 client library for interacting with the [Apache Superset API](https://superset.apache.org/docs/api/). This library provides a clean, object-oriented interface for managing dashboards, authentication, and API requests.
+A PHP client library for interacting with the [Apache Superset API](https://superset.apache.org/docs/api/).
 
 ## Installation
 
@@ -44,8 +44,7 @@ $superset = SupersetFactory::createAuthenticated(
 $dashboards = $superset->getDashboards();
 
 foreach ($dashboards as $dashboard) {
-    echo "Dashboard: {$dashboard->title} (ID: {$dashboard->id})\n";
-    echo "URL: {$dashboard->url}\n";
+    echo sprintf("Dashboard: %s (ID %d)", $dashboard->title, $dashboard->id);
 }
 ```
 
@@ -131,8 +130,6 @@ $guestToken = $superset->auth()->createGuestToken(
     ],
     rls: []
 );
-
-echo "Guest Token: {$guestToken}\n";
 ```
 
 ### CSRF Token Handling
@@ -237,16 +234,6 @@ Contributions are welcome! Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md
 ## License
 
 This library is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-- **Issues**: [GitHub Issues](https://github.com/mihaikelemen/superset-php-client/issues)
-- **Source**: [GitHub Repository](https://github.com/mihaikelemen/superset-php-client)
-
-## Credits
-
-- **Author**: Mihai KELEMEN
-- **Email**: mihai@webmanage.ro
 
 ## Acknowledgments
 
