@@ -18,5 +18,6 @@ return (new PhpCsFixer\Config())
         'array_indentation' => true,
         'ternary_operator_spaces' => true,
         'whitespace_after_comma_in_array' => true,
+        'phpdoc_to_comment' => false, // Disable to preserve /** @var */ for PHPStan
     ])
     ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect());
