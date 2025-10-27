@@ -4,17 +4,7 @@
 [![Latest Version](https://img.shields.io/packagist/v/mihaikelemen/superset-php-client)](https://packagist.org/packages/mihaikelemen/superset-php-client)
 [![License](https://img.shields.io/packagist/l/mihaikelemen/superset-php-client)](https://github.com/mihaikelemen/superset-php-client/blob/main/LICENSE)
 
-A modern, fully-typed PHP client library for interacting with the [Apache Superset](https://superset.apache.org/) API. This library provides a clean, object-oriented interface for managing dashboards, authentication, and API requests.
-
-## Features
-
-- 🚀 **Modern PHP**: Requires PHP 8.4+ with full type safety
-- 🔐 **Authentication Support**: Username/password, bearer tokens, guest tokens, and CSRF protection
-- 📊 **Dashboard Management**: Retrieve dashboards, embedded UUIDs, and filter by tags
-- 🎯 **Fully Typed**: Complete type hints and PHPStan level max compliance
-- 🧪 **Well Tested**: Comprehensive unit test coverage
-- 🔧 **Flexible**: Custom HTTP client support and configuration options
-- 📦 **PSR-4 Autoloading**: Standard Composer autoloading
+PHP 8.4 client library for interacting with the [Apache Superset API](https://superset.apache.org/docs/api/). This library provides a clean, object-oriented interface for managing dashboards, authentication, and API requests.
 
 ## Installation
 
@@ -29,8 +19,8 @@ composer require mihaikelemen/superset-php-client
 - PHP 8.4 or higher
 - ext-curl
 - ext-json
-- GuzzleHTTP 7.10+
-- Symfony Serializer Pack 1.3+
+- GuzzleHTTP
+- Symfony Serializer
 
 ## Quick Start
 
@@ -181,38 +171,6 @@ $result = $superset->patch('chart/456', [
 $result = $superset->delete('dashboard/123');
 ```
 
-### Working with Dashboard Data
-
-```php
-$dashboard = $superset->getDashboard('123');
-
-// Access dashboard properties
-echo "ID: {$dashboard->id}\n";
-echo "Title: {$dashboard->title}\n";
-echo "Slug: {$dashboard->slug}\n";
-echo "URL: {$dashboard->url}\n";
-echo "Published: " . ($dashboard->isPublished ? 'Yes' : 'No') . "\n";
-
-// Access owners
-foreach ($dashboard->owners as $owner) {
-    echo "Owner: {$owner['first_name']} {$owner['last_name']}\n";
-}
-
-// Access tags
-foreach ($dashboard->tags as $tag) {
-    echo "Tag: {$tag['name']}\n";
-}
-
-// Access metadata
-if ($dashboard->updatedAt) {
-    echo "Last updated: {$dashboard->updatedAt->format('Y-m-d H:i:s')}\n";
-}
-
-if ($dashboard->updatedBy) {
-    echo "Updated by: {$dashboard->updatedBy['first_name']} {$dashboard->updatedBy['last_name']}\n";
-}
-```
-
 ## Advanced Configuration
 
 ### Custom HTTP Client
@@ -250,68 +208,6 @@ $superset->auth()->setAccessToken('token');
 // Or use the HTTP client directly
 $httpClient = new HttpClient($httpConfig);
 $httpClient->addDefaultHeader('X-Custom-Header', 'value');
-```
-
-## Error Handling
-
-The library throws specific exceptions for different error scenarios:
-
-```php
-use Superset\Exception\AuthenticationException;
-use Superset\Exception\HttpResponseException;
-use Superset\Exception\JsonDecodeException;
-use Superset\Exception\SerializationException;
-use Superset\Exception\UnexpectedRuntimeException;
-
-try {
-    $superset = SupersetFactory::createAuthenticated(
-        'https://your-superset-instance.com',
-        'username',
-        'wrong-password'
-    );
-} catch (AuthenticationException $e) {
-    echo "Authentication failed: {$e->getMessage()}\n";
-} catch (HttpResponseException $e) {
-    echo "HTTP error: {$e->getMessage()}\n";
-    echo "Status code: {$e->getCode()}\n";
-} catch (JsonDecodeException $e) {
-    echo "JSON decode error: {$e->getMessage()}\n";
-} catch (SerializationException $e) {
-    echo "Serialization error: {$e->getMessage()}\n";
-} catch (UnexpectedRuntimeException $e) {
-    echo "Unexpected error: {$e->getMessage()}\n";
-}
-```
-
-## Development
-
-### Running Tests
-
-```bash
-# Run unit tests
-composer test
-
-# Run all tests (including integration)
-composer test:all
-
-# Run with coverage
-composer test:coverage
-```
-
-### Code Quality
-
-```bash
-# Run PHP CS Fixer
-composer cs-fix
-
-# Check code style
-composer cs-check
-
-# Run PHPStan analysis
-composer phpstan
-
-# Run all quality checks
-composer quality
 ```
 
 ## API Coverage
