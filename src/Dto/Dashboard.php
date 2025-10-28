@@ -42,7 +42,7 @@ final class Dashboard
         #[SerializedName('changed_by')]
         public ?array $updatedBy = null,
 
-        #[SerializedName('changed_on')]
+        #[SerializedName('changed_on_utc')]
         public ?\DateTimeImmutable $updatedAt = null,
 
         /** @var array<int, array{id: int, name: string, type: int}> */

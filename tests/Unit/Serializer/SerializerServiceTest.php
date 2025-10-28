@@ -122,7 +122,7 @@ final class SerializerServiceTest extends BaseTestCase
         $data = [
             'id' => 999,
             'dashboard_title' => 'DateTime Test',
-            'changed_on' => '2024-01-01T10:00:00+00:00',
+            'changed_on_utc' => '2024-01-01T10:00:00+00:00',
         ];
 
         $dashboard = $this->serializer->hydrate($data, Dashboard::class);
@@ -231,7 +231,7 @@ final class SerializerServiceTest extends BaseTestCase
 
         $normalized = $this->serializer->dehydrate($dashboard);
 
-        $this->assertSame('2024-02-15T14:30:00+00:00', $normalized['changed_on']);
+        $this->assertSame('2024-02-15T14:30:00+00:00', $normalized['changed_on_utc']);
     }
 
     public function testDehydrateMethodHandlesArrayFields(): void
@@ -278,7 +278,7 @@ final class SerializerServiceTest extends BaseTestCase
 
         $normalized = $serializer->dehydrate($dashboard);
 
-        $this->assertSame('2024-03-20 16:45:00', $normalized['changed_on']);
+        $this->assertSame('2024-03-20 16:45:00', $normalized['changed_on_utc']);
     }
 
     public function testCreateMethodWithCustomTimeZone(): void
@@ -295,7 +295,7 @@ final class SerializerServiceTest extends BaseTestCase
 
         $normalized = $serializer->dehydrate($dashboard);
 
-        $this->assertStringContainsString('2024-04-10T08:00:00', $normalized['changed_on']);
+        $this->assertStringContainsString('2024-04-10T08:00:00', $normalized['changed_on_utc']);
     }
 
     public function testHydrateAndDehydrateRoundTrip(): void
@@ -311,7 +311,7 @@ final class SerializerServiceTest extends BaseTestCase
             'json_metadata' => '{"y": 2}',
             'thumbnail_url' => $this->buildUrl('thumb.jpg'),
             'is_managed_externally' => false,
-            'changed_on' => '2024-05-01T00:00:00+00:00',
+            'changed_on_utc' => '2024-05-01T00:00:00+00:00',
         ];
 
         $dashboard = $this->serializer->hydrate($originalData, Dashboard::class);
@@ -327,7 +327,7 @@ final class SerializerServiceTest extends BaseTestCase
         $this->assertSame($originalData['json_metadata'], $dehydrated['json_metadata']);
         $this->assertSame($originalData['thumbnail_url'], $dehydrated['thumbnail_url']);
         $this->assertSame($originalData['is_managed_externally'], $dehydrated['is_managed_externally']);
-        $this->assertSame($originalData['changed_on'], $dehydrated['changed_on']);
+        $this->assertSame($originalData['changed_on_utc'], $dehydrated['changed_on_utc']);
     }
 
     public function testDehydrateMethodThrowsExceptionOnNonArrayResult(): void

@@ -122,7 +122,7 @@ final class DashboardTest extends BaseTestCase
             ],
             'created_by' => ['id' => 3, 'first_name' => 'Charlie', 'last_name' => 'Brown'],
             'changed_by' => ['id' => 4, 'first_name' => 'Diana', 'last_name' => 'Prince'],
-            'changed_on' => '2024-01-15T14:30:00+00:00',
+            'changed_on_utc' => '2024-01-15T14:30:00+00:00',
             'tags' => [
                 ['id' => 10, 'name' => 'production', 'type' => 1],
                 ['id' => 11, 'name' => 'owner:1', 'type' => 3],
@@ -204,7 +204,7 @@ final class DashboardTest extends BaseTestCase
                 'id' => 137,
                 'last_name' => 'kelemen',
             ],
-            'changed_on' => '2025-10-21T11:38:12.413017+00:00',
+            'changed_on_utc' => '2025-10-21T11:38:12.413017+00:00',
             'tags' => [
                 ['id' => 2, 'name' => 'owner:3', 'type' => 3],
                 ['id' => 14, 'name' => 'user', 'type' => 1],
@@ -252,7 +252,7 @@ final class DashboardTest extends BaseTestCase
         $this->assertSame('Dehydrate Test', $normalized['dashboard_title']);
         $this->assertSame('dehydrate-test', $normalized['slug']);
         $this->assertTrue($normalized['published']);
-        $this->assertArrayHasKey('changed_on', $normalized);
+        $this->assertArrayHasKey('changed_on_utc', $normalized);
         $this->assertIsArray($normalized['tags']);
         $this->assertSame('test-tag', $normalized['tags'][0]['name']);
     }
