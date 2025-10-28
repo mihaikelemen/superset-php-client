@@ -21,13 +21,13 @@ final class UrlBuilderTest extends BaseTestCase
 
     protected function setUp(): void
     {
-        $this->apiConfig = new ApiConfig('v1');
-        $this->urlBuilder = new UrlBuilder('https://superset.example.com', $this->apiConfig);
+        $this->apiConfig = new ApiConfig();
+        $this->urlBuilder = new UrlBuilder(self::BASE_URL, $this->apiConfig);
     }
 
     public function testConstructorSetsProperties(): void
     {
-        $this->assertSame('https://superset.example.com', $this->urlBuilder->baseUrl);
+        $this->assertSame(self::BASE_URL, $this->urlBuilder->baseUrl);
 
         $config = $this->getPrivateProperty($this->urlBuilder, 'apiConfig');
         $this->assertSame($this->apiConfig, $config);
@@ -37,7 +37,7 @@ final class UrlBuilderTest extends BaseTestCase
     {
         $result = $this->urlBuilder->build('dashboard/123');
 
-        $expected = 'https://superset.example.com/api/v1/dashboard/123';
+        $expected = $this->buildUrl('api/v1/dashboard/123');
         $this->assertSame($expected, $result);
     }
 
@@ -45,27 +45,27 @@ final class UrlBuilderTest extends BaseTestCase
     {
         $result = $this->urlBuilder->build('/dashboard/456');
 
-        $expected = 'https://superset.example.com/api/v1/dashboard/456';
+        $expected = $this->buildUrl('api/v1/dashboard/456');
         $this->assertSame($expected, $result);
     }
 
     public function testBuildWithTrailingSlashBaseUrl(): void
     {
-        $urlBuilder = new UrlBuilder('https://superset.example.com/', $this->apiConfig);
+        $urlBuilder = new UrlBuilder(self::BASE_URL, $this->apiConfig);
 
         $result = $urlBuilder->build('users');
 
-        $expected = 'https://superset.example.com/api/v1/users';
+        $expected = $this->buildUrl('api/v1/users');
         $this->assertSame($expected, $result);
     }
 
     public function testBuildWithBothTrailingAndLeadingSlashes(): void
     {
-        $urlBuilder = new UrlBuilder('https://superset.example.com/', $this->apiConfig);
+        $urlBuilder = new UrlBuilder(self::BASE_URL, $this->apiConfig);
 
         $result = $urlBuilder->build('/users/');
 
-        $expected = 'https://superset.example.com/api/v1/users/';
+        $expected = $this->buildUrl('api/v1/users/');
         $this->assertSame($expected, $result);
     }
 
@@ -73,18 +73,18 @@ final class UrlBuilderTest extends BaseTestCase
     {
         $result = $this->urlBuilder->build('');
 
-        $expected = 'https://superset.example.com/api/v1/';
+        $expected = $this->buildUrl('api/v1/');
         $this->assertSame($expected, $result);
     }
 
     public function testBuildWithCustomApiVersion(): void
     {
         $customConfig = new ApiConfig('v2');
-        $urlBuilder = new UrlBuilder('https://api.example.com', $customConfig);
+        $urlBuilder = new UrlBuilder(self::BASE_URL, $customConfig);
 
         $result = $urlBuilder->build('endpoints');
 
-        $expected = 'https://api.example.com/api/v2/endpoints';
+        $expected = $this->buildUrl('api/v2/endpoints');
         $this->assertSame($expected, $result);
     }
 

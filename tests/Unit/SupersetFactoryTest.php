@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Superset\Tests\Unit;
 
 use Superset\Auth\AuthenticationService;
+use Superset\Config\HttpClientConfig;
 use Superset\Http\Contracts\HttpClientInterface;
 use Superset\Http\UrlBuilder;
 use Superset\Superset;
@@ -28,18 +29,17 @@ final class SupersetFactoryTest extends BaseTestCase
 
     public function testCreateWithMinimalParameters(): void
     {
-        $client = SupersetFactory::create('https://superset.example.com');
+        $client = SupersetFactory::create(self::BASE_URL);
 
         $this->assertInstanceOf(Superset::class, $client);
         $this->assertInstanceOf(UrlBuilder::class, $client->url());
         $this->assertInstanceOf(AuthenticationService::class, $client->auth());
     }
 
-    public function testCreateWithCustomHttpClient(): void
+    public function testCreateWithCustomHttpClientConfig(): void
     {
-        $httpClient = $this->createMock(HttpClientInterface::class);
-
-        $client = SupersetFactory::create('https://superset.example.com', $httpClient);
+        $httpConfig = new HttpClientConfig(self::BASE_URL);
+        $client = SupersetFactory::createWithHttpClientConfig($httpConfig);
 
         $this->assertInstanceOf(Superset::class, $client);
     }
@@ -71,7 +71,7 @@ final class SupersetFactoryTest extends BaseTestCase
             ->method('post')
             ->willReturn(['access_token' => 'test-token']);
 
-        $client = SupersetFactory::create('https://superset.example.com', $httpClient);
+        $client = SupersetFactory::create(self::BASE_URL, $httpClient);
         $client->auth()->authenticate('testuser', 'testpass');
 
         $this->assertTrue($client->auth()->isAuthenticated());
@@ -100,51 +100,50 @@ final class SupersetFactoryTest extends BaseTestCase
     public function testCreateAuthenticatedCallsAuthenticateMethod(): void
     {
         try {
-            SupersetFactory::createAuthenticated('https://superset.example.com', 'user', 'pass');
+            SupersetFactory::createAuthenticated(self::BASE_URL, 'user', 'pass');
             $this->fail('Expected an exception to be thrown');
         } catch (\Throwable $e) {
             $this->assertInstanceOf(\Throwable::class, $e);
         }
     }
 
-    public function testCreateWithHttpClientMethodExists(): void
+    public function testCreateWithHttpClientConfigMethodExists(): void
     {
-        $reflection = new \ReflectionMethod(SupersetFactory::class, 'createWithHttpClient');
+        $reflection = new \ReflectionMethod(SupersetFactory::class, 'createWithHttpClientConfig');
 
         $this->assertTrue($reflection->isPublic());
         $this->assertTrue($reflection->isStatic());
     }
 
-    public function testCreateWithHttpClientMethodParameters(): void
+    public function testCreateWithHttpClientConfigMethodParameters(): void
     {
-        $reflection = new \ReflectionMethod(SupersetFactory::class, 'createWithHttpClient');
+        $reflection = new \ReflectionMethod(SupersetFactory::class, 'createWithHttpClientConfig');
         $parameters = $reflection->getParameters();
 
-        $this->assertCount(2, $parameters);
-        $this->assertSame('baseUrl', $parameters[0]->getName());
-        $this->assertSame('httpClient', $parameters[1]->getName());
+        $this->assertCount(1, $parameters);
+        $this->assertSame('httpConfig', $parameters[0]->getName());
     }
 
-    public function testCreateWithHttpClientReturnsClient(): void
+    public function testCreateWithHttpClientConfigReturnsClient(): void
     {
-        $httpClient = $this->createMock(HttpClientInterface::class);
+        $httpConfig = new HttpClientConfig(self::BASE_URL);
 
-        $client = SupersetFactory::createWithHttpClient('https://superset.example.com', $httpClient);
+        $client = SupersetFactory::createWithHttpClientConfig($httpConfig);
 
         $this->assertInstanceOf(Superset::class, $client);
     }
 
     public function testCreatedClientHasWorkingUrlBuilder(): void
     {
-        $client = SupersetFactory::create('https://superset.example.com');
+        $client = SupersetFactory::create(self::BASE_URL);
         $url = $client->url()->build('dashboard/123');
 
-        $this->assertSame('https://superset.example.com/api/v1/dashboard/123', $url);
+        $this->assertSame($this->buildUrl('api/v1/dashboard/123'), $url);
     }
 
     public function testCreatedClientHasWorkingAuthService(): void
     {
-        $client = SupersetFactory::create('https://superset.example.com');
+        $client = SupersetFactory::create(self::BASE_URL);
 
         $this->assertFalse($client->auth()->isAuthenticated());
     }
@@ -155,10 +154,10 @@ final class SupersetFactoryTest extends BaseTestCase
 
         $createMethod = $reflection->getMethod('create');
         $createAuthenticatedMethod = $reflection->getMethod('createAuthenticated');
-        $createWithHttpClientMethod = $reflection->getMethod('createWithHttpClient');
+        $createWithHttpClientConfigMethod = $reflection->getMethod('createWithHttpClientConfig');
 
         $this->assertTrue($createMethod->isStatic());
         $this->assertTrue($createAuthenticatedMethod->isStatic());
-        $this->assertTrue($createWithHttpClientMethod->isStatic());
+        $this->assertTrue($createWithHttpClientConfigMethod->isStatic());
     }
 }

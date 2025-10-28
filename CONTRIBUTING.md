@@ -1,4 +1,4 @@
-# Contributing to Apache Superset PHP Client
+# Contributing to Superset PHP Client
 
 Contributions are welcome and help make this library better for everyone.
 
@@ -97,7 +97,7 @@ composer quality
 - **Title**: Use a clear, descriptive title
 - **Description**: Explain what changes you made and why
 - **Tests**: Include tests for new features or bug fixes
-- **Documentation**: Update README.md if you're adding new features
+- **Documentation**: Update the documentation (README.md and CHANGELOG.md) as needed
 - **Code Quality**: Ensure all quality checks pass (`composer quality`)
 - **One Feature Per PR**: Keep pull requests focused on a single feature or fix
 - **Single Commit**: All pull requests must contain exactly ONE commit. Use git rebase to squash multiple commits before submitting

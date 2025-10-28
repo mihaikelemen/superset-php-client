@@ -51,6 +51,8 @@ foreach ($dashboards as $dashboard) {
 ### Manual Authentication
 
 ```php
+<?php
+
 use Superset\SupersetFactory;
 
 // Create client without authentication
@@ -66,6 +68,8 @@ $dashboard = $superset->getDashboard('my-dashboard-slug');
 ### Using Bearer Token
 
 ```php
+<?php
+
 use Superset\SupersetFactory;
 
 $superset = SupersetFactory::create('https://your-superset-instance.com');
@@ -84,8 +88,10 @@ $dashboards = $superset->getDashboards();
 #### Get a Single Dashboard
 
 ```php
+<?php
+
 // By ID
-$dashboard = $superset->getDashboard('123');
+$dashboard = $superset->getDashboard(123);
 
 // By slug
 $dashboard = $superset->getDashboard('sales-dashboard');
@@ -98,19 +104,23 @@ echo $dashboard->isPublished ? 'Published' : 'Draft';
 #### Get All Dashboards
 
 ```php
-// Get all published dashboards
+<?php
+
+// Get all dashboards, regardless of their status
 $dashboards = $superset->getDashboards();
 
 // Get dashboards by tag
 $salesDashboards = $superset->getDashboards(tag: 'sales');
 
-// Include unpublished dashboards
-$allDashboards = $superset->getDashboards(onlyPublished: false);
+// Include only published dashboards
+$allDashboards = $superset->getDashboards(onlyPublished: true);
 ```
 
 #### Get Dashboard Embedded UUID
 
 ```php
+<?php
+
 // Get UUID for embedding dashboard in an iframe
 $uuid = $superset->getDashboardUuid('my-dashboard');
 ```
@@ -118,6 +128,8 @@ $uuid = $superset->getDashboardUuid('my-dashboard');
 ### Working with Guest Tokens
 
 ```php
+<?php
+
 // Create a guest token for embedded dashboards
 $guestToken = $superset->auth()->createGuestToken(
     userAttributes: [
@@ -135,7 +147,9 @@ $guestToken = $superset->auth()->createGuestToken(
 ### CSRF Token Handling
 
 ```php
-// Request CSRF token for POST/PUT/PATCH/DELETE operations
+<?php
+
+// Request CSRF token for all operations
 $csrfToken = $superset->auth()->requestCsrfToken();
 
 // The token is automatically added to subsequent requests
@@ -145,6 +159,8 @@ $result = $superset->post('some/endpoint', ['data' => 'value']);
 ### Direct API Calls
 
 ```php
+<?php
+
 // GET request
 $result = $superset->get('chart', ['q' => 'some-filter']);
 
@@ -173,11 +189,13 @@ $result = $superset->delete('dashboard/123');
 ### Custom HTTP Client
 
 ```php
+<?php
+
 use Superset\Config\HttpClientConfig;
 use Superset\Http\HttpClient;
 use Superset\SupersetFactory;
 
-// Create custom HTTP configuration
+// Create a custom HTTP configuration
 $httpConfig = new HttpClientConfig(
     baseUrl: 'https://your-superset-instance.com',
     timeout: 60.0,
@@ -186,23 +204,16 @@ $httpConfig = new HttpClientConfig(
     userAgent: 'MyApp/1.0'
 );
 
-// Create custom HTTP client
-$httpClient = new HttpClient($httpConfig);
-
 // Use with factory
-$superset = SupersetFactory::createWithHttpClient(
-    'https://your-superset-instance.com',
-    $httpClient
-);
+$superset = SupersetFactory::createWithHttpClientConfig($httpConfig);
 ```
 
 ### Custom Headers
 
 ```php
-// Add custom headers to all requests
-$superset->auth()->setAccessToken('token');
+<?php
 
-// Or use the HTTP client directly
+// Create HTTP client with custom headers that apply to all requests
 $httpClient = new HttpClient($httpConfig);
 $httpClient->addDefaultHeader('X-Custom-Header', 'value');
 ```
