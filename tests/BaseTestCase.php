@@ -8,6 +8,13 @@ use PHPUnit\Framework\TestCase;
 
 abstract class BaseTestCase extends TestCase
 {
+    public const BASE_URL = 'https://superset.example.com';
+
+    protected function buildUrl(string $path = ''): string
+    {
+        return \rtrim(self::BASE_URL, '/') . '/' . \ltrim($path, '/');
+    }
+
     protected function getPrivateProperty(object $object, string $propertyName): mixed
     {
         $reflection = new \ReflectionClass($object);

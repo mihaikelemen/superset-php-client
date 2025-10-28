@@ -25,7 +25,7 @@ final class AuthenticationServiceTest extends BaseTestCase
     protected function setUp(): void
     {
         $this->httpClient = $this->createMock(HttpClientInterface::class);
-        $this->urlBuilder = new UrlBuilder('https://superset.example.com', new ApiConfig());
+        $this->urlBuilder = new UrlBuilder(self::BASE_URL, new ApiConfig());
     }
 
     public function testCanBeInstantiated(): void
@@ -128,14 +128,14 @@ final class AuthenticationServiceTest extends BaseTestCase
             ->expects($this->once())
             ->method('post')
             ->with(
-                'https://superset.example.com/api/v1/security/login',
+                $this->buildUrl('api/v1/security/login'),
                 [
                     'username' => 'testuser',
                     'password' => 'testpass',
                     'provider' => 'db',
                     'refresh' => true,
                 ],
-                ['Referer' => 'https://superset.example.com']
+                ['Referer' => self::BASE_URL]
             )
             ->willReturn(['access_token' => 'test-access-token']);
 
@@ -189,9 +189,9 @@ final class AuthenticationServiceTest extends BaseTestCase
             ->expects($this->once())
             ->method('get')
             ->with(
-                'https://superset.example.com/api/v1/security/csrf_token/',
+                $this->buildUrl('api/v1/security/csrf_token/'),
                 [],
-                ['Referer' => 'https://superset.example.com']
+                ['Referer' => self::BASE_URL]
             )
             ->willReturn(['result' => 'csrf-token-value']);
 
@@ -254,13 +254,13 @@ final class AuthenticationServiceTest extends BaseTestCase
             ->expects($this->once())
             ->method('post')
             ->with(
-                'https://superset.example.com/api/v1/security/guest_token',
+                $this->buildUrl('api/v1/security/guest_token'),
                 [
                     'resources' => $expectedResources,
                     'user' => $userAttributes,
                     'rls' => $rls,
                 ],
-                ['Referer' => 'https://superset.example.com']
+                ['Referer' => self::BASE_URL]
             )
             ->willReturn(['token' => 'guest-token-value']);
 
@@ -280,13 +280,13 @@ final class AuthenticationServiceTest extends BaseTestCase
             ->expects($this->once())
             ->method('post')
             ->with(
-                'https://superset.example.com/api/v1/security/guest_token',
+                $this->buildUrl('api/v1/security/guest_token'),
                 [
                     'resources' => [['type' => 'dashboard', 'id' => 'test-id']],
                     'user' => $userAttributes,
                     'rls' => [],
                 ],
-                ['Referer' => 'https://superset.example.com']
+                ['Referer' => self::BASE_URL]
             )
             ->willReturn(['token' => 'guest-token']);
 

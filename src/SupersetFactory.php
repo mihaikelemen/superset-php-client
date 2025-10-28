@@ -19,11 +19,14 @@ final class SupersetFactory
         string $baseUrl,
         ?HttpClientInterface $httpClient = null,
     ): Superset {
-        $httpConfig = new HttpClientConfig($baseUrl);
         $apiConfig = new ApiConfig();
         $serializerConfig = new SerializerConfig();
 
-        $httpClient = $httpClient ?? new HttpClient($httpConfig);
+        if (!$httpClient instanceof HttpClientInterface) {
+            $httpConfig = new HttpClientConfig($baseUrl);
+            $httpClient = new HttpClient($httpConfig);
+        }
+
         $urlBuilder = new UrlBuilder($baseUrl, $apiConfig);
         $authService = new AuthenticationService($httpClient, $urlBuilder);
         $serializer = SerializerService::create($serializerConfig);
@@ -42,10 +45,11 @@ final class SupersetFactory
         return $client;
     }
 
-    public static function createWithHttpClient(
-        string $baseUrl,
-        HttpClientInterface $httpClient,
+    public static function createWithHttpClientConfig(
+        HttpClientConfig $httpConfig,
     ): Superset {
-        return self::create($baseUrl, httpClient: $httpClient);
+        $httpClient = new HttpClient($httpConfig);
+
+        return self::create($httpConfig->baseUrl, $httpClient);
     }
 }

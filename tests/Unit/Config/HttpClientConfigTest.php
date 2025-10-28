@@ -17,7 +17,7 @@ final class HttpClientConfigTest extends BaseTestCase
 {
     public function testConstructorWithRequiredParameters(): void
     {
-        $baseUrl = 'https://superset.example.com';
+        $baseUrl = self::BASE_URL;
         $config = new HttpClientConfig($baseUrl);
 
         $this->assertSame($baseUrl, $config->baseUrl);
@@ -30,7 +30,7 @@ final class HttpClientConfigTest extends BaseTestCase
 
     public function testConstructorWithCustomTimeout(): void
     {
-        $baseUrl = 'https://superset.example.com';
+        $baseUrl = self::BASE_URL;
         $timeout = 30;
         $config = new HttpClientConfig($baseUrl, $timeout);
 
@@ -44,7 +44,7 @@ final class HttpClientConfigTest extends BaseTestCase
 
     public function testConstructorWithAllParameters(): void
     {
-        $baseUrl = 'https://secure.superset.com';
+        $baseUrl = self::BASE_URL;
         $timeout = 60;
         $maxRedirects = 5;
         $userAgent = 'CustomClient/2.0';
@@ -70,7 +70,7 @@ final class HttpClientConfigTest extends BaseTestCase
 
     public function testWithCustomConfigWithAllParameters(): void
     {
-        $config = new HttpClientConfig('https://superset.example.com');
+        $config = new HttpClientConfig(self::BASE_URL);
         $newConfig = $config->withCustomConfig(
             'https://superset.new.example.com',
             30,
@@ -90,10 +90,10 @@ final class HttpClientConfigTest extends BaseTestCase
 
     public function testWithCustomConfigWithPartialParameters(): void
     {
-        $config = new HttpClientConfig('https://superset.example.com', 20, 4, 'Agent/1.0', true, false);
+        $config = new HttpClientConfig(self::BASE_URL, 20, 4, 'Agent/1.0', true, false);
         $newConfig = $config->withCustomConfig(timeout: 50, verifySsl: false);
 
-        $this->assertSame('https://superset.example.com', $newConfig->baseUrl);
+        $this->assertSame(self::BASE_URL, $newConfig->baseUrl);
         $this->assertSame(50, $newConfig->timeout);
         $this->assertSame(4, $newConfig->maxRedirects);
         $this->assertSame('Agent/1.0', $newConfig->userAgent);
@@ -103,10 +103,10 @@ final class HttpClientConfigTest extends BaseTestCase
 
     public function testWithCustomConfigWithNoParameters(): void
     {
-        $config = new HttpClientConfig('https://superset.example.com', 25, 2, 'Test/1.0', true, true);
+        $config = new HttpClientConfig(self::BASE_URL, 25, 2, 'Test/1.0', true, true);
         $newConfig = $config->withCustomConfig();
 
-        $this->assertSame('https://superset.example.com', $newConfig->baseUrl);
+        $this->assertSame(self::BASE_URL, $newConfig->baseUrl);
         $this->assertSame(25, $newConfig->timeout);
         $this->assertSame(2, $newConfig->maxRedirects);
         $this->assertSame('Test/1.0', $newConfig->userAgent);
@@ -116,17 +116,17 @@ final class HttpClientConfigTest extends BaseTestCase
 
     public function testWithCustomConfigCreatesNewInstance(): void
     {
-        $config = new HttpClientConfig('https://superset.example.com');
+        $config = new HttpClientConfig(self::BASE_URL);
         $newConfig = $config->withCustomConfig(baseUrl: 'https://superset.new.example.com');
 
         $this->assertNotSame($config, $newConfig);
-        $this->assertSame('https://superset.example.com', $config->baseUrl);
+        $this->assertSame(self::BASE_URL, $config->baseUrl);
         $this->assertSame('https://superset.new.example.com', $newConfig->baseUrl);
     }
 
     public function testReadonlyProperties(): void
     {
-        $config = new HttpClientConfig('https://superset.example.com');
+        $config = new HttpClientConfig(self::BASE_URL);
         $reflection = new \ReflectionClass($config);
         $properties = $reflection->getProperties();
 

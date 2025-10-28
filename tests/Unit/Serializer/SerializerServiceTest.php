@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Superset\Tests\Unit\Serializer;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Superset\Config\SerializerConfig;
 use Superset\Dto\Dashboard;
 use Superset\Exception\SerializationException;
 use Superset\Serializer\SerializerService;
 use Superset\Tests\BaseTestCase;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * @group unit
@@ -97,7 +100,7 @@ final class SerializerServiceTest extends BaseTestCase
             'css' => '.test { color: red; }',
             'position_json' => '{"test": "position"}',
             'json_metadata' => '{"test": "metadata"}',
-            'thumbnail_url' => 'https://example.com/thumb.png',
+            'thumbnail_url' => $this->buildUrl('thumb.png'),
             'is_managed_externally' => true,
         ];
 
@@ -110,7 +113,7 @@ final class SerializerServiceTest extends BaseTestCase
         $this->assertSame('.test { color: red; }', $dashboard->css);
         $this->assertSame('{"test": "position"}', $dashboard->position);
         $this->assertSame('{"test": "metadata"}', $dashboard->metadata);
-        $this->assertSame('https://example.com/thumb.png', $dashboard->thumbnail);
+        $this->assertSame($this->buildUrl('thumb.png'), $dashboard->thumbnail);
         $this->assertTrue($dashboard->isManagedExternally);
     }
 
@@ -194,12 +197,12 @@ final class SerializerServiceTest extends BaseTestCase
             id: 333,
             title: 'Property Mapping Test',
             slug: 'property-mapping-test',
-            url: 'https://example.com/dashboard',
+            url: $this->buildUrl('dashboard'),
             isPublished: true,
             css: '.dashboard { width: 100%; }',
             position: '{"test": "pos"}',
             metadata: '{"test": "meta"}',
-            thumbnail: 'https://example.com/image.png',
+            thumbnail: $this->buildUrl('image.png'),
             isManagedExternally: false
         );
 
@@ -208,12 +211,12 @@ final class SerializerServiceTest extends BaseTestCase
         $this->assertSame(333, $normalized['id']);
         $this->assertSame('Property Mapping Test', $normalized['dashboard_title']);
         $this->assertSame('property-mapping-test', $normalized['slug']);
-        $this->assertSame('https://example.com/dashboard', $normalized['url']);
+        $this->assertSame($this->buildUrl('dashboard'), $normalized['url']);
         $this->assertTrue($normalized['published']);
         $this->assertSame('.dashboard { width: 100%; }', $normalized['css']);
         $this->assertSame('{"test": "pos"}', $normalized['position_json']);
         $this->assertSame('{"test": "meta"}', $normalized['json_metadata']);
-        $this->assertSame('https://example.com/image.png', $normalized['thumbnail_url']);
+        $this->assertSame($this->buildUrl('image.png'), $normalized['thumbnail_url']);
         $this->assertFalse($normalized['is_managed_externally']);
     }
 
@@ -301,12 +304,12 @@ final class SerializerServiceTest extends BaseTestCase
             'id' => 999,
             'dashboard_title' => 'Round Trip Test',
             'slug' => 'round-trip',
-            'url' => 'https://example.com',
+            'url' => $this->buildUrl('dashboard'),
             'published' => true,
             'css' => '.test { }',
             'position_json' => '{"x": 1}',
             'json_metadata' => '{"y": 2}',
-            'thumbnail_url' => 'https://example.com/thumb.jpg',
+            'thumbnail_url' => $this->buildUrl('thumb.jpg'),
             'is_managed_externally' => false,
             'changed_on' => '2024-05-01T00:00:00+00:00',
         ];
@@ -329,8 +332,8 @@ final class SerializerServiceTest extends BaseTestCase
 
     public function testDehydrateMethodThrowsExceptionOnNonArrayResult(): void
     {
-        /** @var \Symfony\Component\Serializer\Serializer&\PHPUnit\Framework\MockObject\MockObject $serializer */
-        $serializer = $this->createMock(\Symfony\Component\Serializer\Serializer::class);
+        /** @var Serializer&MockObject $serializer */
+        $serializer = $this->createMock(Serializer::class);
         $serializer
             ->expects($this->once())
             ->method('normalize')
@@ -346,9 +349,9 @@ final class SerializerServiceTest extends BaseTestCase
 
     public function testDehydrateMethodThrowsExceptionOnSerializerException(): void
     {
-        /** @var \Symfony\Component\Serializer\Serializer&\PHPUnit\Framework\MockObject\MockObject $serializer */
-        $serializer = $this->createMock(\Symfony\Component\Serializer\Serializer::class);
-        $exception = new class extends \RuntimeException implements \Symfony\Component\Serializer\Exception\ExceptionInterface {};
+        /** @var Serializer&MockObject $serializer */
+        $serializer = $this->createMock(Serializer::class);
+        $exception = new class extends \RuntimeException implements ExceptionInterface {};
 
         $serializer
             ->expects($this->once())

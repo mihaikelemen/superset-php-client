@@ -31,7 +31,7 @@ final class SupersetTest extends BaseTestCase
     protected function setUp(): void
     {
         $this->httpClient = $this->createMock(HttpClientInterface::class);
-        $this->urlBuilder = new UrlBuilder('https://superset.example.com', new ApiConfig());
+        $this->urlBuilder = new UrlBuilder(self::BASE_URL, new ApiConfig());
         $this->authService = new AuthenticationService($this->httpClient, $this->urlBuilder);
         $this->serializer = SerializerService::create(new SerializerConfig());
     }
@@ -95,7 +95,7 @@ final class SupersetTest extends BaseTestCase
         $this->httpClient
             ->expects($this->once())
             ->method('get')
-            ->with('https://superset.example.com/api/v1/test-endpoint', ['param' => 'value'])
+            ->with($this->buildUrl('api/v1/test-endpoint'), ['param' => 'value'])
             ->willReturn(['result' => 'success']);
 
         $client = new Superset($this->httpClient, $this->urlBuilder, $this->authService, $this->serializer);
@@ -109,7 +109,7 @@ final class SupersetTest extends BaseTestCase
         $this->httpClient
             ->expects($this->once())
             ->method('post')
-            ->with('https://superset.example.com/api/v1/test-endpoint', ['data' => 'value'])
+            ->with($this->buildUrl('api/v1/test-endpoint'), ['data' => 'value'])
             ->willReturn(['created' => true]);
 
         $client = new Superset($this->httpClient, $this->urlBuilder, $this->authService, $this->serializer);
@@ -123,7 +123,7 @@ final class SupersetTest extends BaseTestCase
         $this->httpClient
             ->expects($this->once())
             ->method('put')
-            ->with('https://superset.example.com/api/v1/test-endpoint', ['data' => 'value'])
+            ->with($this->buildUrl('api/v1/test-endpoint'), ['data' => 'value'])
             ->willReturn(['updated' => true]);
 
         $client = new Superset($this->httpClient, $this->urlBuilder, $this->authService, $this->serializer);
@@ -137,7 +137,7 @@ final class SupersetTest extends BaseTestCase
         $this->httpClient
             ->expects($this->once())
             ->method('patch')
-            ->with('https://superset.example.com/api/v1/test-endpoint', ['data' => 'value'])
+            ->with($this->buildUrl('api/v1/test-endpoint'), ['data' => 'value'])
             ->willReturn(['patched' => true]);
 
         $client = new Superset($this->httpClient, $this->urlBuilder, $this->authService, $this->serializer);
@@ -151,7 +151,7 @@ final class SupersetTest extends BaseTestCase
         $this->httpClient
             ->expects($this->once())
             ->method('delete')
-            ->with('https://superset.example.com/api/v1/test-endpoint')
+            ->with($this->buildUrl('api/v1/test-endpoint'))
             ->willReturn(['deleted' => true]);
 
         $client = new Superset($this->httpClient, $this->urlBuilder, $this->authService, $this->serializer);
@@ -172,7 +172,7 @@ final class SupersetTest extends BaseTestCase
         $this->httpClient
             ->expects($this->once())
             ->method('get')
-            ->with('https://superset.example.com/api/v1/dashboard/test-slug')
+            ->with($this->buildUrl('api/v1/dashboard/test-slug'))
             ->willReturn(['result' => $dashboardData]);
 
         $client = new Superset($this->httpClient, $this->urlBuilder, $this->authService, $this->serializer);
@@ -221,7 +221,7 @@ final class SupersetTest extends BaseTestCase
         $this->httpClient
             ->expects($this->once())
             ->method('get')
-            ->with('https://superset.example.com/api/v1/dashboard/123/embedded')
+            ->with($this->buildUrl('api/v1/dashboard/123/embedded'))
             ->willReturn(['result' => ['uuid' => 'abc-123-def-456']]);
 
         $client = new Superset($this->httpClient, $this->urlBuilder, $this->authService, $this->serializer);
@@ -288,7 +288,7 @@ final class SupersetTest extends BaseTestCase
         $this->httpClient
             ->expects($this->once())
             ->method('get')
-            ->with('https://superset.example.com/api/v1/dashboard', [])
+            ->with($this->buildUrl('api/v1/dashboard'), [])
             ->willReturn(['result' => $dashboardsData]);
 
         $client = new Superset($this->httpClient, $this->urlBuilder, $this->authService, $this->serializer);
@@ -360,7 +360,7 @@ final class SupersetTest extends BaseTestCase
         $this->httpClient
             ->expects($this->once())
             ->method('get')
-            ->with('https://superset.example.com/api/v1/dashboard', $expectedParams)
+            ->with($this->buildUrl('api/v1/dashboard'), $expectedParams)
             ->willReturn(['result' => []]);
 
         $client = new Superset($this->httpClient, $this->urlBuilder, $this->authService, $this->serializer);
@@ -378,7 +378,7 @@ final class SupersetTest extends BaseTestCase
         $this->httpClient
             ->expects($this->once())
             ->method('get')
-            ->with('https://superset.example.com/api/v1/dashboard', $expectedParams)
+            ->with($this->buildUrl('api/v1/dashboard'), $expectedParams)
             ->willReturn(['result' => []]);
 
         $client = new Superset($this->httpClient, $this->urlBuilder, $this->authService, $this->serializer);
@@ -396,7 +396,7 @@ final class SupersetTest extends BaseTestCase
         $this->httpClient
             ->expects($this->once())
             ->method('get')
-            ->with('https://superset.example.com/api/v1/dashboard', $expectedParams)
+            ->with($this->buildUrl('api/v1/dashboard'), $expectedParams)
             ->willReturn(['result' => []]);
 
         $client = new Superset($this->httpClient, $this->urlBuilder, $this->authService, $this->serializer);
@@ -423,7 +423,7 @@ final class SupersetTest extends BaseTestCase
         $this->httpClient
             ->expects($this->once())
             ->method('get')
-            ->with('https://superset.example.com/api/v1/dashboard', $expectedParams)
+            ->with($this->buildUrl('api/v1/dashboard'), $expectedParams)
             ->willReturn(['result' => []]);
 
         $client = new Superset($this->httpClient, $this->urlBuilder, $this->authService, $this->serializer);
