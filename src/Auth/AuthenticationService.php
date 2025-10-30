@@ -20,8 +20,10 @@ final class AuthenticationService
     ) {
     }
 
-    public function authenticate(string $username, string $password): void
-    {
+    public function authenticate(
+        #[\SensitiveParameter] string $username,
+        #[\SensitiveParameter] string $password,
+    ): void {
         $url = $this->urlBuilder->build('security/login');
 
         $response = $this->httpClient->post(
@@ -38,8 +40,9 @@ final class AuthenticationService
         $this->setAccessToken($this->extractToken($response, 'access_token'));
     }
 
-    public function setAccessToken(string $token): self
-    {
+    public function setAccessToken(
+        #[\SensitiveParameter] string $token,
+    ): self {
         $this->accessToken = $token;
         $this->httpClient->addDefaultHeader('Authorization', "Bearer {$token}");
 

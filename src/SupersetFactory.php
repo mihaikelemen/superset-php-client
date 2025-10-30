@@ -36,8 +36,8 @@ final class SupersetFactory
 
     public static function createAuthenticated(
         string $baseUrl,
-        string $username,
-        string $password,
+        #[\SensitiveParameter] string $username,
+        #[\SensitiveParameter] string $password,
     ): Superset {
         $client = self::create($baseUrl);
         $client->auth()->authenticate($username, $password);
