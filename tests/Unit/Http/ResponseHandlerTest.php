@@ -134,6 +134,18 @@ final class ResponseHandlerTest extends BaseTestCase
         $this->handler->handle($json, $httpCode);
     }
 
+    public function testHandleErrorWithArrayMessage(): void
+    {
+        $json = '{"message": {"user": {"last_name": ["Field may not be null."]}}}';
+        $httpCode = 400;
+
+        $this->expectException(HttpResponseException::class);
+        $this->expectExceptionMessage('Superset API request failed with HTTP error 400 - Bad Request');
+        $this->expectExceptionCode(400);
+
+        $this->handler->handle($json, $httpCode);
+    }
+
     public function testIsFinalClass(): void
     {
         $reflection = new \ReflectionClass(ResponseHandler::class);

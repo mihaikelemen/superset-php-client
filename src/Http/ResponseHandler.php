@@ -47,7 +47,7 @@ final class ResponseHandler
     private function throwHttpError(int $httpCode, array $response): never
     {
         $rawMessage = $response['message'] ?? $response['error'] ?? '';
-        $message = \is_string($rawMessage) ? $rawMessage : '';
+        $message = \is_string($rawMessage) ? $rawMessage : (\is_array($rawMessage) ? \json_encode($rawMessage) : '');
         $statusText = HttpStatusCode::tryFrom($httpCode)?->message() ?? "HTTP {$httpCode} error";
 
         if (empty($message)) {
