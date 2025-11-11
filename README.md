@@ -2,6 +2,7 @@
 
 [![PHP Version](https://img.shields.io/packagist/php-v/mihaikelemen/superset-php-client)](https://packagist.org/packages/mihaikelemen/superset-php-client)
 [![Latest Version](https://img.shields.io/packagist/v/mihaikelemen/superset-php-client)](https://packagist.org/packages/mihaikelemen/superset-php-client)
+[![CI](https://github.com/mihaikelemen/superset-php-client/workflows/CI/badge.svg)](https://github.com/mihaikelemen/superset-php-client/actions/workflows/ci.yml)
 [![License](https://img.shields.io/packagist/l/mihaikelemen/superset-php-client)](https://github.com/mihaikelemen/superset-php-client/blob/main/LICENSE)
 
 A PHP client library for interacting with the [Apache Superset API](https://superset.apache.org/docs/api/).
@@ -43,9 +44,6 @@ $superset = SupersetFactory::createAuthenticated(
 // Get all dashboards
 $dashboards = $superset->getDashboards();
 
-foreach ($dashboards as $dashboard) {
-    echo sprintf("Dashboard: %s (ID %d)", $dashboard->title, $dashboard->id);
-}
 ```
 
 ### Manual Authentication

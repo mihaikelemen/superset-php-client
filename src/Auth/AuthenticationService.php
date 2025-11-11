@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Superset\Auth;
 
+use Superset\Config\GuestUserConfig;
 use Superset\Exception\AuthenticationException;
 use Superset\Http\Contracts\HttpClientInterface;
 use Superset\Http\UrlBuilder;
@@ -95,11 +96,24 @@ final class AuthenticationService
 
         $url = $this->urlBuilder->build('security/guest_token');
 
+        /** @var string|null $firstName */
+        $firstName = $userAttributes['first_name'] ?? null;
+        /** @var string|null $lastName */
+        $lastName = $userAttributes['last_name'] ?? null;
+        /** @var string|null $username */
+        $username = $userAttributes['username'] ?? null;
+
+        $guestUserAttributes = new GuestUserConfig(
+            firstName: $firstName,
+            lastName: $lastName,
+            username: $username
+        )->attributes();
+
         $response = $this->httpClient->post(
             url: $url,
             data: [
                 'resources' => $resources,
-                'user' => $userAttributes,
+                'user' => $guestUserAttributes,
                 'rls' => $rls,
             ],
             headers: ['Referer' => $this->urlBuilder->baseUrl]
