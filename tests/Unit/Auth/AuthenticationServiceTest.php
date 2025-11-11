@@ -241,13 +241,19 @@ final class AuthenticationServiceTest extends BaseTestCase
 
     public function testCreateGuestTokenCallsHttpClientWithCorrectParameters(): void
     {
-        $userAttributes = ['username' => 'guest', 'first_name' => 'John'];
+        $userAttributes = ['username' => 'jhondoe', 'first_name' => 'John'];
         $resources = ['dashboard' => 'abc-123', 'chart' => 'xyz-789'];
         $rls = [['clause' => 'user_id = 1']];
 
         $expectedResources = [
             ['type' => 'dashboard', 'id' => 'abc-123'],
             ['type' => 'chart', 'id' => 'xyz-789'],
+        ];
+
+        $expectedUserAttributes = [
+            'username' => 'jhondoe',
+            'first_name' => 'John',
+            'last_name' => 'User',
         ];
 
         $this->httpClient
@@ -257,7 +263,7 @@ final class AuthenticationServiceTest extends BaseTestCase
                 $this->buildUrl('api/v1/security/guest_token'),
                 [
                     'resources' => $expectedResources,
-                    'user' => $userAttributes,
+                    'user' => $expectedUserAttributes,
                     'rls' => $rls,
                 ],
                 ['Referer' => self::BASE_URL]
@@ -271,10 +277,15 @@ final class AuthenticationServiceTest extends BaseTestCase
         $this->assertSame('guest-token-value', $authService->getGuestToken());
     }
 
-    public function testCreateGuestTokenWithEmptyRls(): void
+    public function testCreateGuestTokenWithNoGuestUserAttributesDefinedAndEmptyRls(): void
     {
-        $userAttributes = ['username' => 'guest'];
         $resources = ['dashboard' => 'test-id'];
+
+        $expectedUserAttributes = [
+            'username' => 'guest_user',
+            'first_name' => 'Guest',
+            'last_name' => 'User',
+        ];
 
         $this->httpClient
             ->expects($this->once())
@@ -283,7 +294,7 @@ final class AuthenticationServiceTest extends BaseTestCase
                 $this->buildUrl('api/v1/security/guest_token'),
                 [
                     'resources' => [['type' => 'dashboard', 'id' => 'test-id']],
-                    'user' => $userAttributes,
+                    'user' => $expectedUserAttributes,
                     'rls' => [],
                 ],
                 ['Referer' => self::BASE_URL]
@@ -291,9 +302,10 @@ final class AuthenticationServiceTest extends BaseTestCase
             ->willReturn(['token' => 'guest-token']);
 
         $authService = new AuthenticationService($this->httpClient, $this->urlBuilder);
-        $token = $authService->createGuestToken($userAttributes, $resources);
+        $token = $authService->createGuestToken([], $resources);
 
         $this->assertSame('guest-token', $token);
+        $this->assertSame('guest-token', $authService->getGuestToken());
     }
 
     public function testCreateGuestTokenThrowsExceptionWhenNoToken(): void
