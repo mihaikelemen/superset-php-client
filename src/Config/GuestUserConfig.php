@@ -52,10 +52,12 @@ final readonly class GuestUserConfig
             return $this->username;
         }
 
-        return \sprintf(
-            '%s_%s',
-            \mb_strtolower(self::GUEST_FIRST_NAME),
-            \mb_strtolower(self::GUEST_LAST_NAME)
-        );
+        $name = \sprintf('%s_%s', $this->getFirstName(), $this->getLastName());
+
+        return \preg_replace(
+            '/\s+/',
+            '_',
+            $name
+        ) ?? \str_replace(' ', '_', $name);
     }
 }

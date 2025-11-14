@@ -32,7 +32,7 @@ abstract class BaseTestCase extends TestCase
         $property->setValue($object, $value);
     }
 
-    protected function invokePrivateMethod(object $object, string $methodName, array $args = []): mixed
+    protected function invokeMethod(object $object, string $methodName, array $args = []): mixed
     {
         $reflection = new \ReflectionClass($object);
         $method = $reflection->getMethod($methodName);
