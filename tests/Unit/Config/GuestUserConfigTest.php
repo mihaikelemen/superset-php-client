@@ -18,13 +18,11 @@ final class GuestUserConfigTest extends BaseTestCase
     public function testConstructorWithDefaultValues(): void
     {
         $config = new GuestUserConfig();
-        $reflection = new \ReflectionMethod($config, 'getUsername');
-        $reflection->setAccessible(true);
 
         $expected = [
             'first_name' => GuestUserConfig::GUEST_FIRST_NAME,
             'last_name' => GuestUserConfig::GUEST_LAST_NAME,
-            'username' => $reflection->invoke($config),
+            'username' => $this->invokeMethod($config, 'getUsername'),
         ];
 
         $this->assertSame($expected, $config->attributes());
@@ -46,13 +44,11 @@ final class GuestUserConfigTest extends BaseTestCase
     public function testEmptyValuesUseDefaults(): void
     {
         $config = new GuestUserConfig('', '', '');
-        $reflection = new \ReflectionMethod($config, 'getUsername');
-        $reflection->setAccessible(true);
 
         $expected = [
             'first_name' => GuestUserConfig::GUEST_FIRST_NAME,
             'last_name' => GuestUserConfig::GUEST_LAST_NAME,
-            'username' => $reflection->invoke($config),
+            'username' => $this->invokeMethod($config, 'getUsername'),
         ];
 
         $this->assertSame($expected, $config->attributes());
@@ -76,11 +72,15 @@ final class GuestUserConfigTest extends BaseTestCase
 
     public function testUnicodeCharacterSupport(): void
     {
-        $config = new GuestUserConfig('José', 'García', 'josé_garcía');
+        $config = new GuestUserConfig('José', 'García', 'José_García');
 
-        $this->assertSame('José', $config->attributes()['first_name']);
-        $this->assertSame('García', $config->attributes()['last_name']);
-        $this->assertSame('josé_garcía', $config->attributes()['username']);
+        $expected = [
+            'first_name' => 'José',
+            'last_name' => 'García',
+            'username' => 'José_García',
+        ];
+
+        $this->assertSame($expected, $config->attributes());
     }
 
     public function testConstants(): void
@@ -99,6 +99,46 @@ final class GuestUserConfigTest extends BaseTestCase
         $this->assertArrayHasKey('first_name', $attributes);
         $this->assertArrayHasKey('last_name', $attributes);
         $this->assertArrayHasKey('username', $attributes);
+    }
+
+    public function testGeneratedUsernameWithWhitespace(): void
+    {
+        $config = new GuestUserConfig('John Michael', 'Doe Smith');
+
+        $username = $config->attributes()['username'];
+
+        $this->assertSame('John_Michael_Doe_Smith', $username);
+        $this->assertStringNotContainsString(' ', $username);
+    }
+
+    public function testGeneratedUsernameDefaultsWithMultipleSpaces(): void
+    {
+        $config = new GuestUserConfig('Guest  Name', 'User  Test');
+
+        $username = $config->attributes()['username'];
+
+        $this->assertStringNotContainsString('  ', $username);
+        $this->assertStringContainsString('_', $username);
+    }
+
+    public function testGetUsernameHandlesPregReplaceFailure(): void
+    {
+        $initialValue = \ini_get('pcre.backtrack_limit');
+
+        try {
+            \ini_set('pcre.backtrack_limit', '1');
+
+            $config = new GuestUserConfig(
+                \str_repeat('A', 1000),
+                \str_repeat('B', 1000)
+            );
+
+            $username = $config->attributes()['username'];
+            $this->assertIsString($username);
+            $this->assertNotEmpty($username);
+        } finally {
+            \ini_set('pcre.backtrack_limit', $initialValue);
+        }
     }
 
     public function testClassStructure(): void

@@ -282,7 +282,7 @@ final class AuthenticationServiceTest extends BaseTestCase
         $resources = ['dashboard' => 'test-id'];
 
         $expectedUserAttributes = [
-            'username' => 'guest_user',
+            'username' => 'Guest_User',
             'first_name' => 'Guest',
             'last_name' => 'User',
         ];

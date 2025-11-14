@@ -81,12 +81,12 @@ final class HttpClientTest extends BaseTestCase
     {
         $client = new HttpClient($this->config, $this->responseHandler, $this->cookieJar);
 
-        $this->assertTrue($this->invokePrivateMethod($client, 'shouldIncludeBody', ['POST']));
-        $this->assertTrue($this->invokePrivateMethod($client, 'shouldIncludeBody', ['PUT']));
-        $this->assertTrue($this->invokePrivateMethod($client, 'shouldIncludeBody', ['PATCH']));
-        $this->assertTrue($this->invokePrivateMethod($client, 'shouldIncludeBody', ['post']));
-        $this->assertFalse($this->invokePrivateMethod($client, 'shouldIncludeBody', ['GET']));
-        $this->assertFalse($this->invokePrivateMethod($client, 'shouldIncludeBody', ['DELETE']));
+        $this->assertTrue($this->invokeMethod($client, 'shouldIncludeBody', ['POST']));
+        $this->assertTrue($this->invokeMethod($client, 'shouldIncludeBody', ['PUT']));
+        $this->assertTrue($this->invokeMethod($client, 'shouldIncludeBody', ['PATCH']));
+        $this->assertTrue($this->invokeMethod($client, 'shouldIncludeBody', ['post']));
+        $this->assertFalse($this->invokeMethod($client, 'shouldIncludeBody', ['GET']));
+        $this->assertFalse($this->invokeMethod($client, 'shouldIncludeBody', ['DELETE']));
     }
 
     public function testClassMethods(): void
