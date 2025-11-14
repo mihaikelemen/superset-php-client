@@ -2,6 +2,45 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.0.6
+
+### Changed
+- **Breaking**: Usernames now preserve case instead of being automatically lowercased
+- Improved guest username generation in `GuestUserConfig` to handle whitespace by replacing spaces with underscores
+- Username generation now uses actual first/last names instead of hardcoded constants for better flexibility
+- Refactored `BaseTestCase::invokePrivateMethod()` to `invokeMethod()` for clarity and consistency
+
+### Fixed
+- Guest usernames with spaces are now properly formatted with underscores
+
+## v1.0.5
+
+### Added
+- `GuestUserConfig` class for standardized and validated guest user attributes
+- Default constants for guest user attributes (Guest User with username `guest_user`)
+
+### Changed
+- `AuthenticationService` now uses `GuestUserConfig` for guest token creation
+- Improved type safety in authentication flow for guest tokens
+
+### Documentation
+- Updated documentation to reflect `GuestUserConfig` usage
+
+## v1.0.4
+
+### Fixed
+- Error response handling in `ResponseHandler` now properly handles array messages
+
+## v1.0.3
+
+### Changed
+- Added `#[\SensitiveParameter]` attribute to sensitive parameters in authentication methods for improved security
+
+## v1.0.2
+
+### Fixed
+- Corrected `SerializedName` for `updatedAt` property to `changed_on_utc` in `Dashboard` DTO
+
 ## v1.0.1
 
 ### Changed
