@@ -6,17 +6,18 @@ namespace Superset;
 
 use Superset\Auth\AuthenticationService;
 use Superset\Dto\Dashboard;
-use Superset\Exception\UnexpectedRuntimeException;
 use Superset\Http\Contracts\HttpClientInterface;
 use Superset\Http\UrlBuilder;
 use Superset\Serializer\SerializerService;
+use Superset\Service\DashboardService;
 
 /**
  * @method AuthenticationService auth()
  * @method UrlBuilder            url()
+ * @method DashboardService      dashboard()
  * @method Dashboard             getDashboard(string $identity)
  * @method string                getDashboardUuid(string $identity)
- * @method Dashboard[]           getDashboards(?string $tag = null, bool $onlyPublished = true)
+ * @method Dashboard[]           getDashboards(?string $tag = null, ?bool $onlyPublished = null)
  * @method array<string, mixed>  get(string $endpoint, array<string, mixed> $query = [])
  * @method array<string, mixed>  post(string $endpoint, array<string, mixed> $data = [])
  * @method array<string, mixed>  put(string $endpoint, array<string, mixed> $data = [])
@@ -25,6 +26,8 @@ use Superset\Serializer\SerializerService;
  */
 final class Superset
 {
+    private ?DashboardService $dashboardService = null;
+
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly UrlBuilder $urlBuilder,
@@ -43,89 +46,43 @@ final class Superset
         return $this->urlBuilder;
     }
 
-    /**
-     * @param string $identity - Dashboard ID or slug
-     */
-    public function getDashboard(string $identity): Dashboard
+    public function dashboard(): DashboardService
     {
-        $url = $this->urlBuilder->build("dashboard/{$identity}");
-        $response = $this->httpClient->get($url);
-
-        if (!isset($response['result']) || !is_array($response['result'])) {
-            throw new UnexpectedRuntimeException("Dashboard data not found in response for dashboard identifier '{$identity}'");
-        }
-
-        /** @var array<string, mixed> $result */
-        $result = $response['result'];
-
-        return $this->serializer->hydrate($result, Dashboard::class);
+        return $this->dashboardService ??= new DashboardService(
+            $this->httpClient,
+            $this->urlBuilder,
+            $this->serializer,
+        );
     }
 
     /**
      * @param string $identity - Dashboard ID or slug
+     *
+     * @deprecated Use dashboard()->get() instead
+     */
+    public function getDashboard(string $identity): Dashboard
+    {
+        return $this->dashboard()->get($identity);
+    }
+
+    /**
+     * @param string $identity - Dashboard ID or slug
+     *
+     * @deprecated Use dashboard()->uuid() instead
      */
     public function getDashboardUuid(string $identity): string
     {
-        $url = $this->urlBuilder->build("dashboard/{$identity}/embedded");
-        $response = $this->httpClient->get($url);
-
-        if (!isset($response['result']) || !is_array($response['result']) || !isset($response['result']['uuid']) || !\is_string($response['result']['uuid'])) {
-            throw new UnexpectedRuntimeException("Dashboard UUID not found in response for dashboard identifier '{$identity}'");
-        }
-
-        return $response['result']['uuid'];
+        return $this->dashboard()->uuid($identity);
     }
 
     /**
      * @return Dashboard[]
+     *
+     * @deprecated Use dashboard()->list() instead
      */
     public function getDashboards(?string $tag = null, ?bool $onlyPublished = null): array
     {
-        $dashboards = $this->get('dashboard', $this->createFilteredParams($tag, $onlyPublished))['result'] ?? [];
-
-        if (empty($dashboards)) {
-            return [];
-        }
-
-        if (!\is_array($dashboards)) {
-            throw new UnexpectedRuntimeException('Invalid dashboards data format received from API');
-        }
-
-        $result = [];
-        foreach ($dashboards as $dashboard) {
-            if (\is_array($dashboard)) {
-                /** @var array<string, mixed> $dashboard */
-                $result[] = $this->serializer->hydrate($dashboard, Dashboard::class);
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function createFilteredParams(?string $tag = null, ?bool $onlyPublished = null): array
-    {
-        $params = [];
-
-        if (null !== $tag) {
-            $params['q'] = \json_encode([
-                'filters' => [
-                    [
-                        'col' => 'tags',
-                        'opr' => 'dashboard_tags',
-                        'value' => $tag,
-                    ],
-                ],
-            ]);
-        }
-
-        if (null !== $onlyPublished) {
-            $params['published'] = $onlyPublished ? 'true' : 'false';
-        }
-
-        return $params;
+        return $this->dashboard()->list($tag, $onlyPublished);
     }
 
     /**

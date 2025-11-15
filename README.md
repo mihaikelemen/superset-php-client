@@ -42,7 +42,7 @@ $superset = SupersetFactory::createAuthenticated(
 );
 
 // Get all dashboards
-$dashboards = $superset->getDashboards();
+$dashboards = $superset->dashboard()->list();
 
 ```
 
@@ -60,7 +60,7 @@ $superset = SupersetFactory::create('https://your-superset-instance.com');
 $superset->auth()->authenticate('username', 'password');
 
 // Now you can make authenticated requests
-$dashboard = $superset->getDashboard('my-dashboard-slug');
+$dashboard = $superset->dashboard()->get('my-dashboard-slug');
 ```
 
 ### Using Bearer Token
@@ -76,7 +76,7 @@ $superset = SupersetFactory::create('https://your-superset-instance.com');
 $superset->auth()->setAccessToken('your-bearer-token');
 
 // Make requests
-$dashboards = $superset->getDashboards();
+$dashboards = $superset->dashboard()->list();
 ```
 
 ## Usage Examples
@@ -89,10 +89,10 @@ $dashboards = $superset->getDashboards();
 <?php
 
 // By ID
-$dashboard = $superset->getDashboard(123);
+$dashboard = $superset->dashboard()->get('123');
 
 // By slug
-$dashboard = $superset->getDashboard('sales-dashboard');
+$dashboard = $superset->dashboard()->get('sales-dashboard');
 
 echo $dashboard->title;
 echo $dashboard->url;
@@ -105,13 +105,13 @@ echo $dashboard->isPublished ? 'Published' : 'Draft';
 <?php
 
 // Get all dashboards, regardless of their status
-$dashboards = $superset->getDashboards();
+$dashboards = $superset->dashboard()->list();
 
 // Get dashboards by tag
-$salesDashboards = $superset->getDashboards(tag: 'sales');
+$salesDashboards = $superset->dashboard()->list(tag: 'sales');
 
 // Include only published dashboards
-$allDashboards = $superset->getDashboards(onlyPublished: true);
+$allDashboards = $superset->dashboard()->list(onlyPublished: true);
 ```
 
 #### Get Dashboard Embedded UUID
@@ -120,7 +120,7 @@ $allDashboards = $superset->getDashboards(onlyPublished: true);
 <?php
 
 // Get UUID for embedding dashboard in an iframe
-$uuid = $superset->getDashboardUuid('my-dashboard');
+$uuid = $superset->dashboard()->uuid('my-dashboard');
 ```
 
 ### Working with Guest Tokens
@@ -220,21 +220,19 @@ $httpClient->addDefaultHeader('X-Custom-Header', 'value');
 
 ### Currently Implemented
 
-- ✅ Authentication (username/password, bearer token)
-- ✅ Guest token generation
-- ✅ CSRF token handling
-- ✅ Dashboard retrieval (single, multiple, filtered)
-- ✅ Dashboard embedded UUID
-- ✅ Generic HTTP methods (GET, POST, PUT, PATCH, DELETE)
+- Authentication (username/password, bearer token)
+- Guest token generation
+- CSRF token handling
+- Dashboard retrieval (single, multiple, filtered)
+- Dashboard embedded UUID
+- Generic HTTP methods (GET, POST, PUT, PATCH, DELETE)
 
 ### Planned Features
 
-- 🔄 Chart management
-- 🔄 Dataset operations
-- 🔄 Database connections
-- 🔄 User management
-- 🔄 SQL Lab queries
-- 🔄 Complete Dashboard CRUD operations
+- Chart management
+- Dataset operations
+- User management
+- SQL Lab queries
 
 ## Contributing
 

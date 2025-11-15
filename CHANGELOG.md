@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.0.7
+
+### Added
+- New `DashboardService` class for dedicated dashboard operations
+- `Superset::dashboard()` method to access the new `DashboardService`
+
+### Changed
+- Refactored dashboard-related methods from `Superset` class into dedicated `DashboardService`
+- Dashboard service instance is lazily initialized and cached for better performance
+
+### Deprecated
+- `Superset::getDashboard()` - Use `dashboard()->get()` instead
+- `Superset::getDashboardUuid()` - Use `dashboard()->uuid()` instead
+- `Superset::getDashboards()` - Use `dashboard()->list()` instead
+
 ## v1.0.6
 
 ### Changed
