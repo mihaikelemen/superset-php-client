@@ -12,6 +12,7 @@ use Superset\Exception\UnexpectedRuntimeException;
 use Superset\Http\Contracts\HttpClientInterface;
 use Superset\Http\UrlBuilder;
 use Superset\Serializer\SerializerService;
+use Superset\Service\DashboardService;
 use Superset\Superset;
 use Superset\Tests\BaseTestCase;
 
@@ -88,6 +89,25 @@ final class SupersetTest extends BaseTestCase
         $client = new Superset($this->httpClient, $this->urlBuilder, $this->authService, $this->serializer);
 
         $this->assertSame($this->urlBuilder, $client->url());
+    }
+
+    public function testDashboardMethodReturnsDashboardService(): void
+    {
+        $client = new Superset($this->httpClient, $this->urlBuilder, $this->authService, $this->serializer);
+
+        $dashboard = $client->dashboard();
+
+        $this->assertInstanceOf(DashboardService::class, $dashboard);
+    }
+
+    public function testDashboardMethodReturnsSameInstance(): void
+    {
+        $client = new Superset($this->httpClient, $this->urlBuilder, $this->authService, $this->serializer);
+
+        $dashboard1 = $client->dashboard();
+        $dashboard2 = $client->dashboard();
+
+        $this->assertSame($dashboard1, $dashboard2);
     }
 
     public function testGetMethodCallsHttpClient(): void
