@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.0
+
+### Added
+- Monolog integration for structured application logging
+- `LoggerService` for centralized logger management
+- `LoggerConfig` for configurable logging (channel, path, level)
+- Optional logger injection via `LoggerInterface` in `HttpClient`, `ResponseHandler`, and `SupersetFactory`
+- Automatic exception logging through `AbstractException` base class
+- Debug stream support in `HttpClientConfig` for Guzzle HTTP debugging
+
+### Changed
+- `HttpClient` accepts optional logger, defaults to file-based logging when not provided
+- `ResponseHandler` logs HTTP errors and JSON decode failures
+- Factory methods accept optional logger parameter for custom logging implementations
+- Exception constructors accept optional logger for error tracking
+- Test suite updated for new constructor signatures
+
+### Fixed
+- Missing Referer header in HTTP redirects
+- Error messages now fallback to `$response['msg']` when primary field is unavailable
+
 ## v1.0.7
 
 ### Added

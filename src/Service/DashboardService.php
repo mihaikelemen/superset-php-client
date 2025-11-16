@@ -17,6 +17,7 @@ final readonly class DashboardService
         private UrlBuilder $urlBuilder,
         private SerializerService $serializer,
     ) {
+        $this->httpClient->addDefaultHeader('Referer', $this->urlBuilder->baseUrl);
     }
 
     public function get(string $identity): Dashboard
@@ -52,7 +53,10 @@ final readonly class DashboardService
     public function list(?string $tag = null, ?bool $onlyPublished = null): array
     {
         $url = $this->urlBuilder->build('dashboard');
-        $dashboards = $this->httpClient->get($url, $this->createFilteredParams($tag, $onlyPublished))['result'] ?? [];
+        $dashboards = $this->httpClient->get(
+            $url,
+            $this->createFilteredParams($tag, $onlyPublished)
+        )['result'] ?? [];
 
         if (empty($dashboards)) {
             return [];
