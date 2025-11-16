@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Superset\Tests\Unit\Config;
 
 use Superset\Config\HttpClientConfig;
+use Superset\Exception\UnexpectedRuntimeException;
 use Superset\Tests\BaseTestCase;
 
 /**
@@ -159,5 +160,34 @@ final class HttpClientConfigTest extends BaseTestCase
         $reflection = new \ReflectionClass(HttpClientConfig::class);
 
         $this->assertTrue($reflection->isFinal());
+    }
+
+    public function testConstructorWithValidDebugResource(): void
+    {
+        $debugResource = \fopen('php://memory', 'w');
+        $config = new HttpClientConfig(
+            self::BASE_URL,
+            debug: $debugResource
+        );
+
+        $this->assertIsResource($config->debug);
+        $this->assertSame($debugResource, $config->debug);
+
+        \fclose($debugResource);
+    }
+
+    public function testConstructorWithNullDebug(): void
+    {
+        $config = new HttpClientConfig(self::BASE_URL, debug: null);
+
+        $this->assertNull($config->debug);
+    }
+
+    public function testConstructorThrowsExceptionForBooleanDebug(): void
+    {
+        $this->expectException(UnexpectedRuntimeException::class);
+        $this->expectExceptionMessage('The debug parameter must be a valid resource. Got boolean instead.');
+
+        new HttpClientConfig(self::BASE_URL, debug: true);
     }
 }

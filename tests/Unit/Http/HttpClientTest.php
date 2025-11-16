@@ -11,7 +11,6 @@ use Superset\Config\HttpClientConfig;
 use Superset\Exception\UnexpectedRuntimeException;
 use Superset\Http\Contracts\HttpClientInterface;
 use Superset\Http\HttpClient;
-use Superset\Http\ResponseHandler;
 use Superset\Tests\BaseTestCase;
 
 /**
@@ -23,19 +22,17 @@ use Superset\Tests\BaseTestCase;
 final class HttpClientTest extends BaseTestCase
 {
     private HttpClientConfig $config;
-    private ResponseHandler $responseHandler;
     private CookieJar $cookieJar;
 
     protected function setUp(): void
     {
         $this->config = new HttpClientConfig(self::BASE_URL);
-        $this->responseHandler = new ResponseHandler();
         $this->cookieJar = new CookieJar();
     }
 
     public function testClassStructure(): void
     {
-        $client = new HttpClient($this->config, $this->responseHandler, $this->cookieJar);
+        $client = new HttpClient($this->config, $this->cookieJar);
         $reflection = new \ReflectionClass(HttpClient::class);
 
         $this->assertInstanceOf(HttpClient::class, $client);
@@ -44,15 +41,16 @@ final class HttpClientTest extends BaseTestCase
 
         $constructor = $reflection->getConstructor();
         $this->assertNotNull($constructor);
-        $this->assertCount(3, $constructor->getParameters());
+        $this->assertCount(4, $constructor->getParameters());
 
         $this->assertTrue($reflection->getProperty('config')->isReadOnly());
+        $this->assertTrue($reflection->getProperty('logger')->isReadOnly());
         $this->assertTrue($reflection->getProperty('responseHandler')->isReadOnly());
     }
 
     public function testConstructorInitialization(): void
     {
-        $client = new HttpClient($this->config, $this->responseHandler, $this->cookieJar);
+        $client = new HttpClient($this->config, $this->cookieJar);
 
         $expectedHeaders = [
             'Content-Type' => 'application/json',
@@ -65,7 +63,7 @@ final class HttpClientTest extends BaseTestCase
 
     public function testDefaultHeaderManagement(): void
     {
-        $client = new HttpClient($this->config, $this->responseHandler, $this->cookieJar);
+        $client = new HttpClient($this->config, $this->cookieJar);
 
         $client->addDefaultHeader('Authorization', 'Bearer token123');
         $headers = $client->getDefaultHeaders();
@@ -79,7 +77,7 @@ final class HttpClientTest extends BaseTestCase
 
     public function testShouldIncludeBodyMethod(): void
     {
-        $client = new HttpClient($this->config, $this->responseHandler, $this->cookieJar);
+        $client = new HttpClient($this->config, $this->cookieJar);
 
         $this->assertTrue($this->invokeMethod($client, 'shouldIncludeBody', ['POST']));
         $this->assertTrue($this->invokeMethod($client, 'shouldIncludeBody', ['PUT']));
@@ -106,6 +104,17 @@ final class HttpClientTest extends BaseTestCase
 
         $this->assertTrue($reflection->hasConstant('HTTP_METHODS_WITH_BODY'));
         $this->assertSame(['POST', 'PUT', 'PATCH'], $reflection->getConstant('HTTP_METHODS_WITH_BODY'));
+    }
+
+    public function testConstructorWithDebugResource(): void
+    {
+        $debugStream = \fopen('php://memory', 'w');
+        $configWithDebug = new HttpClientConfig(self::BASE_URL, debug: $debugStream);
+        $client = new HttpClient($configWithDebug, $this->cookieJar);
+
+        $this->assertInstanceOf(Client::class, $this->getPrivateProperty($client, 'client'));
+
+        \fclose($debugStream);
     }
 
     public function testHttpMethodCalls(): void
@@ -204,7 +213,7 @@ final class HttpClientTest extends BaseTestCase
 
     private function createHttpClientWithMockGuzzle(object $mockClient): HttpClient
     {
-        $client = new HttpClient($this->config, $this->responseHandler, $this->cookieJar);
+        $client = new HttpClient($this->config, $this->cookieJar);
 
         $this->setPrivateProperty($client, 'client', $mockClient);
 

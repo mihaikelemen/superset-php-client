@@ -4,10 +4,20 @@ declare(strict_types=1);
 
 namespace Superset\Exception;
 
+use Psr\Log\LoggerInterface;
+
 final class UnexpectedRuntimeException extends AbstractException
 {
-    public function __construct(string $message = 'An unexpected runtime error occurred in Superset integration.', int $code = 500, ?\Throwable $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
+    /**
+     * @param array<string, mixed> $context
+     */
+    public function __construct(
+        string $message = 'An unexpected runtime error occurred in Superset integration.',
+        int $code = 500,
+        ?\Throwable $previous = null,
+        array $context = [],
+        ?LoggerInterface $logger = null,
+    ) {
+        parent::__construct($message, $code, $previous, $context, $logger);
     }
 }

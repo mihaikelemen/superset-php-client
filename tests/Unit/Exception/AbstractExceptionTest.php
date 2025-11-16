@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Superset\Tests\Unit\Exception;
 
+use Psr\Log\LoggerInterface;
 use Superset\Exception\AbstractException;
 use Superset\Tests\BaseTestCase;
 
@@ -23,65 +24,68 @@ final class AbstractExceptionTest extends BaseTestCase
         $this->assertInstanceOf(\Throwable::class, $exception);
     }
 
-    public function testConstructorWithDefaultValues(): void
-    {
-        $exception = $this->createConcreteException();
-
-        $this->assertSame('', $exception->getMessage());
-        $this->assertSame(0, $exception->getCode());
-        $this->assertNull($exception->getPrevious());
-    }
-
-    public function testConstructorWithCustomMessage(): void
-    {
-        $message = 'Test exception message';
-        $exception = $this->createConcreteException($message);
-
-        $this->assertSame($message, $exception->getMessage());
-        $this->assertSame(0, $exception->getCode());
-        $this->assertNull($exception->getPrevious());
-    }
-
-    public function testConstructorWithCustomCode(): void
+    public function testConstructorWithBasicParameters(): void
     {
         $message = 'Test message';
         $code = 500;
-        $exception = $this->createConcreteException($message, $code);
+        $previous = new \RuntimeException('Previous exception');
+
+        $exception = $this->createConcreteException($message, $code, $previous);
 
         $this->assertSame($message, $exception->getMessage());
         $this->assertSame($code, $exception->getCode());
-        $this->assertNull($exception->getPrevious());
+        $this->assertSame($previous, $exception->getPrevious());
     }
 
-    public function testConstructorWithPreviousException(): void
+    public function testConstructorLogsWithLogger(): void
+    {
+        $message = 'Test message';
+        $code = 404;
+        $previous = new \RuntimeException('Database error');
+        $context = ['table' => 'users'];
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())
+            ->method('error')
+            ->with($message, $this->callback(fn ($log) => $log['code'] === $code
+                && $log['context'] === $context
+                && $log['previous'] === $previous->getMessage()
+                && isset($log['exception'])));
+
+        $this->createConcreteException($message, $code, $previous, $context, $logger);
+    }
+
+    public function testConstructorLogsWithLoggerAndNoPrevious(): void
     {
         $message = 'Test message';
         $code = 400;
-        $previous = new \RuntimeException('Previous exception');
-        $exception = $this->createConcreteException($message, $code, $previous);
+        $context = ['field' => 'email'];
 
-        $this->assertSame($message, $exception->getMessage());
-        $this->assertSame($code, $exception->getCode());
-        $this->assertSame($previous, $exception->getPrevious());
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())
+            ->method('error')
+            ->with($message, $this->callback(fn ($log) => $log['code'] === $code
+                && $log['context'] === $context
+                && null === $log['previous']
+                && isset($log['exception'])));
+
+        $this->createConcreteException($message, $code, null, $context, $logger);
     }
 
-    public function testConstructorWithAllParameters(): void
+    public function testConstructorWithoutLoggerDoesNotLog(): void
     {
-        $message = 'Complete test message';
-        $code = 422;
-        $previous = new \InvalidArgumentException('Input validation failed');
-        $exception = $this->createConcreteException($message, $code, $previous);
+        $exception = $this->createConcreteException('Test', 500, null, ['key' => 'value']);
 
-        $this->assertSame($message, $exception->getMessage());
-        $this->assertSame($code, $exception->getCode());
-        $this->assertSame($previous, $exception->getPrevious());
+        $this->assertInstanceOf(AbstractException::class, $exception);
     }
 
     private function createConcreteException(
         string $message = '',
         int $code = 0,
         ?\Throwable $previous = null,
+        array $context = [],
+        ?LoggerInterface $logger = null,
     ): AbstractException {
-        return new class($message, $code, $previous) extends AbstractException {};
+        return new class($message, $code, $previous, $context, $logger) extends AbstractException {};
     }
 }

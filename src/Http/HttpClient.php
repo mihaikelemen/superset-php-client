@@ -8,10 +8,13 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
+use Psr\Log\LoggerInterface;
 use Superset\Config\HttpClientConfig;
+use Superset\Config\LoggerConfig;
 use Superset\Enum\HttpStatusCode;
 use Superset\Exception\UnexpectedRuntimeException;
 use Superset\Http\Contracts\HttpClientInterface;
+use Superset\Service\LoggerService;
 
 final class HttpClient implements HttpClientInterface
 {
@@ -32,18 +35,26 @@ final class HttpClient implements HttpClientInterface
      */
     private array $query = [];
 
+    private readonly LoggerInterface $logger;
+
+    private readonly ResponseHandler $responseHandler;
+
     public function __construct(
         private readonly HttpClientConfig $config,
-        private readonly ResponseHandler $responseHandler = new ResponseHandler(),
         private CookieJar $cookieJar = new CookieJar(),
+        ?LoggerInterface $logger = null,
+        ?ResponseHandler $responseHandler = null,
     ) {
+        $this->logger = $logger ?? (new LoggerService(new LoggerConfig()))->get();
+        $this->responseHandler = $responseHandler ?? new ResponseHandler($this->logger);
+
         $this->defaultHeaders = [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
             'User-Agent' => $this->config->userAgent,
         ];
 
-        $this->client = new Client([
+        $clientConfig = [
             RequestOptions::TIMEOUT => $this->config->timeout,
             RequestOptions::ALLOW_REDIRECTS => [
                 'max' => $this->config->maxRedirects,
@@ -53,7 +64,13 @@ final class HttpClient implements HttpClientInterface
             ],
             RequestOptions::VERIFY => $this->config->verifySsl,
             RequestOptions::HTTP_ERRORS => false,
-        ]);
+        ];
+
+        if (\is_resource($this->config->debug)) {
+            $clientConfig[RequestOptions::DEBUG] = $this->config->debug;
+        }
+
+        $this->client = new Client($clientConfig);
     }
 
     /**
@@ -139,14 +156,16 @@ final class HttpClient implements HttpClientInterface
             $this->query = [];
         }
 
+        $context = ['method' => $method, 'url' => $url, 'options' => $options];
+
         try {
             $response = $this->client->request($method, $url, $options);
             $body = $response->getBody()->getContents();
             $statusCode = $response->getStatusCode();
 
-            return $this->responseHandler->handle($body, $statusCode);
+            return $this->responseHandler->handle($body, $statusCode, $context);
         } catch (GuzzleException $e) {
-            throw new UnexpectedRuntimeException("HTTP Request Error: {$e->getMessage()}", HttpStatusCode::HTTP_UNKNOWN->value, $e);
+            throw new UnexpectedRuntimeException("HTTP Request Error: {$e->getMessage()}", HttpStatusCode::HTTP_UNKNOWN->value, $e, $context, $this->logger);
         }
     }
 

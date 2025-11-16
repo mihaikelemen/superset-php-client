@@ -57,10 +57,12 @@ final class SupersetFactoryTest extends BaseTestCase
         $reflection = new \ReflectionMethod(SupersetFactory::class, 'create');
         $parameters = $reflection->getParameters();
 
-        $this->assertCount(2, $parameters);
+        $this->assertCount(3, $parameters);
         $this->assertSame('baseUrl', $parameters[0]->getName());
         $this->assertSame('httpClient', $parameters[1]->getName());
         $this->assertTrue($parameters[1]->allowsNull());
+        $this->assertSame('logger', $parameters[2]->getName());
+        $this->assertTrue($parameters[2]->allowsNull());
     }
 
     public function testCreateAuthenticatedReturnsAuthenticatedClient(): void
@@ -91,10 +93,12 @@ final class SupersetFactoryTest extends BaseTestCase
         $reflection = new \ReflectionMethod(SupersetFactory::class, 'createAuthenticated');
         $parameters = $reflection->getParameters();
 
-        $this->assertCount(3, $parameters);
+        $this->assertCount(4, $parameters);
         $this->assertSame('baseUrl', $parameters[0]->getName());
         $this->assertSame('username', $parameters[1]->getName());
         $this->assertSame('password', $parameters[2]->getName());
+        $this->assertSame('logger', $parameters[3]->getName());
+        $this->assertTrue($parameters[3]->allowsNull());
     }
 
     public function testCreateAuthenticatedCallsAuthenticateMethod(): void
@@ -120,8 +124,10 @@ final class SupersetFactoryTest extends BaseTestCase
         $reflection = new \ReflectionMethod(SupersetFactory::class, 'createWithHttpClientConfig');
         $parameters = $reflection->getParameters();
 
-        $this->assertCount(1, $parameters);
+        $this->assertCount(2, $parameters);
         $this->assertSame('httpConfig', $parameters[0]->getName());
+        $this->assertSame('logger', $parameters[1]->getName());
+        $this->assertTrue($parameters[1]->allowsNull());
     }
 
     public function testCreateWithHttpClientConfigReturnsClient(): void

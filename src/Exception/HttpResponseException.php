@@ -4,10 +4,20 @@ declare(strict_types=1);
 
 namespace Superset\Exception;
 
+use Psr\Log\LoggerInterface;
+
 final class HttpResponseException extends AbstractException
 {
-    public function __construct(string $message = 'Unexpected HTTP response from Superset.', int $code = 500, ?\Throwable $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
+    /**
+     * @param array<string, mixed> $context
+     */
+    public function __construct(
+        string $message = 'Unexpected HTTP response from Superset.',
+        int $code = 500,
+        ?\Throwable $previous = null,
+        array $context = [],
+        ?LoggerInterface $logger = null,
+    ) {
+        parent::__construct($message, $code, $previous, $context, $logger);
     }
 }
