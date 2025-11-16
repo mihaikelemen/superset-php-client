@@ -48,7 +48,7 @@ final class HttpClient implements HttpClientInterface
             RequestOptions::ALLOW_REDIRECTS => [
                 'max' => $this->config->maxRedirects,
                 'strict' => false,
-                'referer' => false,
+                'referer' => true,
                 'protocols' => ['http', 'https'],
             ],
             RequestOptions::VERIFY => $this->config->verifySsl,
