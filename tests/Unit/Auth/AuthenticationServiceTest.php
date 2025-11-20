@@ -9,6 +9,7 @@ use Superset\Config\ApiConfig;
 use Superset\Exception\AuthenticationException;
 use Superset\Http\Contracts\HttpClientInterface;
 use Superset\Http\UrlBuilder;
+use Superset\Service\Component\GuestUserService;
 use Superset\Tests\BaseTestCase;
 
 /**
@@ -251,9 +252,9 @@ final class AuthenticationServiceTest extends BaseTestCase
         ];
 
         $expectedUserAttributes = [
-            'username' => 'jhondoe',
             'first_name' => 'John',
-            'last_name' => 'User',
+            'last_name' => GuestUserService::GUEST_LAST_NAME,
+            'username' => 'jhondoe',
         ];
 
         $this->httpClient
@@ -282,9 +283,9 @@ final class AuthenticationServiceTest extends BaseTestCase
         $resources = ['dashboard' => 'test-id'];
 
         $expectedUserAttributes = [
+            'first_name' => GuestUserService::GUEST_FIRST_NAME,
+            'last_name' => GuestUserService::GUEST_LAST_NAME,
             'username' => 'Guest_User',
-            'first_name' => 'Guest',
-            'last_name' => 'User',
         ];
 
         $this->httpClient
