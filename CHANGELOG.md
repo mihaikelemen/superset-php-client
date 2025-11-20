@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.1
+
+### Changed
+- Moved `DashboardService` to `Service/Component/` subdirectory for better organization
+- Extracted guest user logic from `GuestUserConfig` into new `GuestUserService` class
+- Composer `test:coverage` commands now use coverage formats from `phpunit.dist.xml`
+
+### Fixed
+- Codecov path mapping to handle Docker container paths (`/app/src/` → `src/`)
+- Updated Codecov action to v4 with proper authentication
+- Badge URL format updated to current Codecov standards
+
 ## v1.1.0
 
 ### Added
