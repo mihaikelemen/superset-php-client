@@ -3,7 +3,7 @@
 [![PHP Version](https://img.shields.io/packagist/php-v/mihaikelemen/superset-php-client)](https://packagist.org/packages/mihaikelemen/superset-php-client)
 [![Latest Version](https://img.shields.io/packagist/v/mihaikelemen/superset-php-client)](https://packagist.org/packages/mihaikelemen/superset-php-client)
 [![CI](https://github.com/mihaikelemen/superset-php-client/workflows/CI/badge.svg)](https://github.com/mihaikelemen/superset-php-client/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/mihaikelemen/superset-php-client/branch/main/graph/badge.svg?token=XBBQEU4VUR)](https://codecov.io/gh/mihaikelemen/superset-php-client)
+[![codecov](https://codecov.io/gh/mihaikelemen/superset-php-client/graph/badge.svg?token=XBBQEU4VUR)](https://codecov.io/gh/mihaikelemen/superset-php-client)
 [![License](https://img.shields.io/packagist/l/mihaikelemen/superset-php-client)](https://github.com/mihaikelemen/superset-php-client/blob/main/LICENSE)
 
 A PHP client library for interacting with the [Apache Superset API](https://superset.apache.org/docs/api/).
