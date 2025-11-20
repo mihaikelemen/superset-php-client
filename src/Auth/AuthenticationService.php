@@ -8,6 +8,7 @@ use Superset\Config\GuestUserConfig;
 use Superset\Exception\AuthenticationException;
 use Superset\Http\Contracts\HttpClientInterface;
 use Superset\Http\UrlBuilder;
+use Superset\Service\Component\GuestUserService;
 
 final class AuthenticationService
 {
@@ -103,17 +104,13 @@ final class AuthenticationService
         /** @var string|null $username */
         $username = $userAttributes['username'] ?? null;
 
-        $guestUserAttributes = new GuestUserConfig(
-            firstName: $firstName,
-            lastName: $lastName,
-            username: $username
-        )->attributes();
+        $guestUserConfig = new GuestUserConfig($firstName, $lastName, $username);
 
         $response = $this->httpClient->post(
             url: $url,
             data: [
                 'resources' => $resources,
-                'user' => $guestUserAttributes,
+                'user' => GuestUserService::from($guestUserConfig),
                 'rls' => $rls,
             ],
             headers: ['Referer' => $this->urlBuilder->baseUrl]
