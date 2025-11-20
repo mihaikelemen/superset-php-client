@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Superset\Service;
+namespace Superset\Service\Component;
 
 use Superset\Dto\Dashboard;
 use Superset\Exception\UnexpectedRuntimeException;

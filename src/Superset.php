@@ -9,7 +9,7 @@ use Superset\Dto\Dashboard;
 use Superset\Http\Contracts\HttpClientInterface;
 use Superset\Http\UrlBuilder;
 use Superset\Serializer\SerializerService;
-use Superset\Service\DashboardService;
+use Superset\Service\Component\DashboardService;
 
 /**
  * @method AuthenticationService auth()
