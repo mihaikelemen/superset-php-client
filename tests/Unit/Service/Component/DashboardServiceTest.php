@@ -11,14 +11,14 @@ use Superset\Exception\UnexpectedRuntimeException;
 use Superset\Http\Contracts\HttpClientInterface;
 use Superset\Http\UrlBuilder;
 use Superset\Serializer\SerializerService;
-use Superset\Service\DashboardService;
+use Superset\Service\Component\DashboardService;
 use Superset\Tests\BaseTestCase;
 
 /**
  * @group unit
  * @group service
  *
- * @covers \Superset\Service\DashboardService
+ * @covers \Superset\Service\Component\DashboardService
  */
 final class DashboardServiceTest extends BaseTestCase
 {
