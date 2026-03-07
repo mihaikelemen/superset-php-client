@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.7
+
+### Changed
+- Bumped PHPStan from 2.1.33 to 2.1.40
+- Bumped PHP-CS-Fixer from 3.92.3 to 3.94.2
+- Bumped Monolog from 3.9.0 to 3.10.0
+- Bumped symfony/process from 8.0.0 to 8.0.5
+- Changed `request()` method visibility from `protected` to `private` in `HttpClient`
+
+## v1.1.6
+
+### Changed
+- Bumped PHPUnit from 12.5.4 to 12.5.8
+
 ## v1.1.5
 
 ### Changed
