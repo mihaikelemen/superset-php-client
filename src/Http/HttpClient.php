@@ -140,7 +140,7 @@ final class HttpClient implements HttpClientInterface
      *
      * @return array<string, mixed>
      */
-    protected function request(string $method, string $url, array $data = [], array $headers = []): array
+    private function request(string $method, string $url, array $data = [], array $headers = []): array
     {
         $options = [
             RequestOptions::HEADERS => \array_merge($this->defaultHeaders, $headers),
