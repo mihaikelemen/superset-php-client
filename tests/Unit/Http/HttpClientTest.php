@@ -91,7 +91,7 @@ final class HttpClientTest extends BaseTestCase
         $reflection = new \ReflectionClass(HttpClient::class);
 
         $this->assertTrue($reflection->hasMethod('request'));
-        $this->assertTrue($reflection->getMethod('request')->isProtected());
+        $this->assertTrue($reflection->getMethod('request')->isPrivate());
 
         $this->assertTrue($reflection->hasMethod('shouldIncludeBody'));
         $this->assertTrue($reflection->getMethod('shouldIncludeBody')->isPrivate());
