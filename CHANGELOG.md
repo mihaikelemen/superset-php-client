@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.8
+
+### Changed
+- Bumped PHPStan from 2.1.40 to 2.1.46
+- Bumped symfony/serializer-pack from 1.3.0 to 1.4.0
+- Improved error messages in `DashboardService` for better clarity and consistency
+- Refactored `AuthenticationException` constructor to use positional parameters instead of named parameters
+
 ## v1.1.7
 
 ### Changed

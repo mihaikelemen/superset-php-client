@@ -26,7 +26,7 @@ final readonly class DashboardService
         $response = $this->httpClient->get($url);
 
         if (!isset($response['result']) || !\is_array($response['result'])) {
-            throw new UnexpectedRuntimeException("Dashboard data not found in response for dashboard identifier '{$identity}'");
+            throw new UnexpectedRuntimeException("Unable to retrieve dashboard data for identifier '{$identity}'.");
         }
 
         /** @var array<string, mixed> $result */
@@ -41,7 +41,7 @@ final readonly class DashboardService
         $response = $this->httpClient->get($url);
 
         if (!isset($response['result']) || !\is_array($response['result']) || !isset($response['result']['uuid']) || !\is_string($response['result']['uuid'])) {
-            throw new UnexpectedRuntimeException("Dashboard UUID not found in response for dashboard identifier '{$identity}'");
+            throw new UnexpectedRuntimeException("Unable to retrieve dashboard UUID for identifier '{$identity}'.");
         }
 
         return $response['result']['uuid'];
@@ -63,7 +63,7 @@ final readonly class DashboardService
         }
 
         if (!\is_array($dashboards)) {
-            throw new UnexpectedRuntimeException('Invalid dashboards data format received from API');
+            throw new UnexpectedRuntimeException('Unable to retrieve dashboards due to invalid data format.');
         }
 
         $result = [];
