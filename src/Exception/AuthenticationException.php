@@ -18,6 +18,6 @@ final class AuthenticationException extends AbstractException
         array $context = [],
         ?LoggerInterface $logger = null,
     ) {
-        parent::__construct(message: $message, code: $code, previous: $previous, context: $context, logger: $logger);
+        parent::__construct($message, $code, $previous, $context, $logger);
     }
 }
