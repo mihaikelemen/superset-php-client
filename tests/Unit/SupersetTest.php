@@ -239,7 +239,7 @@ final class SupersetTest extends BaseTestCase
 
         $this->expectExceptionWithMessage(
             UnexpectedRuntimeException::class,
-            "Dashboard data not found in response for dashboard identifier 'invalid-id'"
+            "Unable to retrieve dashboard data for identifier 'invalid-id'."
         );
 
         $client = new Superset($httpClient, $this->urlBuilder, $authService, $this->serializer);
@@ -258,7 +258,7 @@ final class SupersetTest extends BaseTestCase
 
         $this->expectExceptionWithMessage(
             UnexpectedRuntimeException::class,
-            "Dashboard data not found in response for dashboard identifier '999'"
+            "Unable to retrieve dashboard data for identifier '999'."
         );
 
         $client = new Superset($httpClient, $this->urlBuilder, $authService, $this->serializer);
@@ -294,7 +294,7 @@ final class SupersetTest extends BaseTestCase
 
         $this->expectExceptionWithMessage(
             UnexpectedRuntimeException::class,
-            "Dashboard UUID not found in response for dashboard identifier '456'"
+            "Unable to retrieve dashboard UUID for identifier '456'."
         );
 
         $client = new Superset($httpClient, $this->urlBuilder, $authService, $this->serializer);
@@ -313,7 +313,7 @@ final class SupersetTest extends BaseTestCase
 
         $this->expectExceptionWithMessage(
             UnexpectedRuntimeException::class,
-            "Dashboard UUID not found in response for dashboard identifier '789'"
+            "Unable to retrieve dashboard UUID for identifier '789'."
         );
 
         $client = new Superset($httpClient, $this->urlBuilder, $authService, $this->serializer);
@@ -332,7 +332,7 @@ final class SupersetTest extends BaseTestCase
 
         $this->expectExceptionWithMessage(
             UnexpectedRuntimeException::class,
-            "Dashboard UUID not found in response for dashboard identifier 'bad'"
+            "Unable to retrieve dashboard UUID for identifier 'bad'."
         );
 
         $client = new Superset($httpClient, $this->urlBuilder, $authService, $this->serializer);
@@ -409,7 +409,7 @@ final class SupersetTest extends BaseTestCase
 
         $this->expectExceptionWithMessage(
             UnexpectedRuntimeException::class,
-            'Invalid dashboards data format received from API'
+            'Unable to retrieve dashboards due to invalid data format.'
         );
 
         $client = new Superset($httpClient, $this->urlBuilder, $authService, $this->serializer);

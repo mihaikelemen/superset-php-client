@@ -275,7 +275,7 @@ final class DashboardServiceTest extends BaseTestCase
 
         $this->expectExceptionWithMessage(
             UnexpectedRuntimeException::class,
-            'Invalid dashboards data format received from API'
+            'Unable to retrieve dashboards due to invalid data format.'
         );
 
         $this->dashboard($httpClient)->list();
@@ -385,6 +385,8 @@ final class DashboardServiceTest extends BaseTestCase
 
     private function errorMessage(int|string $identity, string $type = 'data'): string
     {
-        return \sprintf("Dashboard %s not found in response for dashboard identifier '%s'", $type, $identity);
+        return 'UUID' === $type
+            ? "Unable to retrieve dashboard UUID for identifier '{$identity}'."
+            : "Unable to retrieve dashboard data for identifier '{$identity}'.";
     }
 }
