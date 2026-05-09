@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.9
+
+### Changed
+- Bumped PHPStan from 2.1.46 to 2.1.54
+- Bumped PHP-CS-Fixer from 3.94.2 to 3.95.1
+- Bumped PHPUnit from 12.5.8 to 12.5.22
+
 ## v1.1.8
 
 ### Changed
