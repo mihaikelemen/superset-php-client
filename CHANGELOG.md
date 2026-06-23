@@ -5,7 +5,11 @@ All notable changes to this project will be documented in this file.
 ## v.1.1.10
 
 ### Changed
-- Bumped PHPStan from 2.1.54 to 2.2.1
+- Bumped phpstan/phpstan from 2.1.54 to 2.2.1
+- Bumped guzzlehttp/guzzle from 7.10.0 to 7.12.1
+- Bumped guzzlehttp/psr7 from 2.8.0 to 2.11.0
+- Bumped friendsofphp/php-cs-fixer from 3.95.1 to 3.95.3
+- Updated dependencies
 
 ## v1.1.9
 
