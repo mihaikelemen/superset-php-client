@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## v.1.1.10
+
+### Changed
+- Bumped PHPStan from 2.1.54 to 2.2.1
+
 ## v1.1.9
 
 ### Changed
