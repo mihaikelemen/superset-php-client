@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.1.11
+
+### Added
+- Documented optional `httpClient` parameter in `SupersetFactory::create()` and `SupersetFactory::createAuthenticated()` usage examples
+- Documented optional `channel` and `level` parameters in `LoggerConfig` usage examples
+
+### Deprecated
+- `SupersetFactory::createWithHttpClientConfig()` - Use `create()` with an optional `HttpClientInterface` instead
+
+### Changed
+- Bumped guzzlehttp/guzzle from 7.12.1 to 7.15.3
+- Bumped phpstan/phpstan from 2.2.2 to 2.2.9
+- Bumped friendsofphp/php-cs-fixer from 3.95.10 to 3.95.21
+- Bumped phpunit/phpunit from 12.5.30 to 12.5.33
+- Updated dependencies
+
 ## v.1.1.10
 
 ### Changed

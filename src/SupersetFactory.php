@@ -44,13 +44,17 @@ final class SupersetFactory
         #[\SensitiveParameter] string $username,
         #[\SensitiveParameter] string $password,
         ?LoggerInterface $logger = null,
+        ?HttpClientInterface $httpClient = null,
     ): Superset {
-        $client = self::create($baseUrl, logger: $logger);
+        $client = self::create($baseUrl, $httpClient, $logger);
         $client->auth()->authenticate($username, $password);
 
         return $client;
     }
 
+    /**
+     * @deprecated Use create() or createAuthenticated() methods with a custom HttpClient instead. It will be removed in v2.0.0.
+     */
     public static function createWithHttpClientConfig(
         HttpClientConfig $httpConfig,
         ?LoggerInterface $logger = null,
