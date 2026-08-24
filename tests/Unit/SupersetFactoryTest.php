@@ -92,22 +92,28 @@ final class SupersetFactoryTest extends BaseTestCase
         $reflection = new \ReflectionMethod(SupersetFactory::class, 'createAuthenticated');
         $parameters = $reflection->getParameters();
 
-        $this->assertCount(4, $parameters);
+        $this->assertCount(5, $parameters);
         $this->assertSame('baseUrl', $parameters[0]->getName());
         $this->assertSame('username', $parameters[1]->getName());
         $this->assertSame('password', $parameters[2]->getName());
         $this->assertSame('logger', $parameters[3]->getName());
         $this->assertTrue($parameters[3]->allowsNull());
+        $this->assertSame('httpClient', $parameters[4]->getName());
+        $this->assertTrue($parameters[4]->allowsNull());
     }
 
     public function testCreateAuthenticatedCallsAuthenticateMethod(): void
     {
-        try {
-            SupersetFactory::createAuthenticated(self::BASE_URL, 'user', 'pass');
-            $this->fail('Expected an exception to be thrown');
-        } catch (\Throwable $e) {
-            $this->assertInstanceOf(\Throwable::class, $e);
-        }
+        $httpClient = $this->createMock(HttpClientInterface::class);
+        $httpClient
+            ->expects($this->once())
+            ->method('post')
+            ->willReturn(['access_token' => 'test-token']);
+
+        $client = SupersetFactory::createAuthenticated(self::BASE_URL, 'user', 'pass', null, $httpClient);
+
+        $this->assertInstanceOf(Superset::class, $client);
+        $this->assertTrue($client->auth()->isAuthenticated());
     }
 
     public function testCreateWithHttpClientConfigMethodExists(): void

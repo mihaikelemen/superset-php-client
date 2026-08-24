@@ -44,6 +44,39 @@ $supersetClient = SupersetFactory::create('https://your-superset-instance.com');
 $supersetClient->auth()->authenticate('username', 'password');
 ```
 
+### Custom HTTP Client
+
+Pass a pre-configured `HttpClientInterface` instance directly into either factory method:
+
+```php
+<?php
+
+use Superset\Config\HttpClientConfig;
+use Superset\Http\HttpClient;
+use Superset\SupersetFactory;
+
+$httpConfig = new HttpClientConfig(
+    baseUrl: 'https://your-superset-instance.com',
+    timeout: 30,
+    verifySsl: true,
+);
+$httpClient = new HttpClient($httpConfig);
+
+// Provide a custom HTTP client to create() or createAuthenticated() methods
+$supersetClient = SupersetFactory::create(
+    baseUrl: 'https://your-superset-instance.com',
+    httpClient: $httpClient,
+);
+
+// You can pass your login credentials to createAuthenticated() if you want to authenticate immediately
+$supersetClient = SupersetFactory::createAuthenticated(
+    baseUrl: 'https://your-superset-instance.com',
+    username: 'your-username',
+    password: 'your-password',
+    httpClient: $httpClient,
+);
+```
+
 ### Bearer Token Authentication
 
 Use an existing access token for authentication:
@@ -231,12 +264,15 @@ The library supports comprehensive logging for debugging and monitoring purposes
 ```php
 <?php
 
+use Monolog\Level;
 use Superset\Config\LoggerConfig;
 use Superset\Service\LoggerService;
 use Superset\SupersetFactory;
 
 $loggerConfig = new LoggerConfig(
-    logPath: '/path/to/application.log'
+    logPath: '/path/to/application.log',
+    channel: 'my-app',        // optional, defaults to 'superset'
+    level: Level::Debug,      // optional, defaults to Level::Info
 );
 
 $supersetClient = SupersetFactory::create(
